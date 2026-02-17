@@ -4,9 +4,13 @@ Create balance groups, invite your friends, and add any expenses you want to sha
 You’ll never have to wonder who owes what ever again!
 
 # Application architecture
-This application was created for educational purposes. It is built in Kotlin using the Jetpack Compose framework and incorporates the following technologies:
-* **Room** – module used for database communication,
-* **Hilt** – DI library,
+This application was created for educational purposes. It contains the following packages:
+* ```app/``` - Main application activity and navigation definitions,
+* ```domain/``` - Application logic written in Kotlin,
+* ```data/``` - Persistence configuration and repository implementations,
+* ```sync/``` - Module containing the P2P synchronization implementation,
+* ```core/``` - Common components such as security and utilities,
+* ```feature/``` - MVVM architecture implementation for each application screen.
 
 # Testing
 

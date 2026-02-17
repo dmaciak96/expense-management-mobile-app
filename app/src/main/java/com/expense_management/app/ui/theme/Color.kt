@@ -1,4 +1,4 @@
-package com.expense_management.ui.theme
+package com.expense_management.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
