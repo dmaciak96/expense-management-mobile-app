@@ -1,4 +1,4 @@
-package com.expense_management.domain
+package com.expense_management.domain.model
 
 abstract class BinaryValue(
     private val bytes: ByteArray

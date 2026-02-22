@@ -1,4 +1,4 @@
-package com.expense_management.domain
+package com.expense_management.domain.model
 
 data class MonetaryAmount(
     val minorUnits: Long,
