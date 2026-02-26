@@ -1,12 +1,11 @@
 package com.expense_management.domain.model
 
 import java.time.Instant
-import java.util.UUID
 
 data class Operation(
-    val id: UUID,
-    val groupId: UUID,
-    val operationAuthorId: UUID,
+    val id: Int,
+    val groupId: Int,
+    val operationAuthorId: Int,
 
     // for UI/human time only (not used for conflict resolution)
     val createdAt: Instant,

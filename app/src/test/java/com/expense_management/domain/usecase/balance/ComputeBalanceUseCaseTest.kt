@@ -1,12 +1,11 @@
-package com.expense_management.domain.usecase
+package com.expense_management.domain.usecase.balance
 
 import com.expense_management.domain.model.BalanceLine
 import com.expense_management.domain.model.CurrencyCode
 import com.expense_management.domain.model.Expense
 import com.expense_management.domain.model.ExpenseShare
 import com.expense_management.domain.model.MonetaryAmount
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert
 import org.junit.Test
 import java.time.Instant
 import java.util.UUID
@@ -14,12 +13,12 @@ import java.util.UUID
 class ComputeBalanceUseCaseTest {
 
     private val computeBalance = ComputeBalanceUseCase()
-    private val groupId = UUID.fromString("00000000-0000-0000-0000-000000000001")
+    private val groupId = 1
 
-    private val memberA = UUID.fromString("00000000-0000-0000-0000-0000000000A1")
-    private val memberB = UUID.fromString("00000000-0000-0000-0000-0000000000B2")
-    private val memberC = UUID.fromString("00000000-0000-0000-0000-0000000000C3")
-    private val memberD = UUID.fromString("00000000-0000-0000-0000-0000000000D4")
+    private val memberA = 1
+    private val memberB = 2
+    private val memberC = 3
+    private val memberD = 4
 
     private fun pln(minorUnits: Long) =
         MonetaryAmount(minorUnits = minorUnits, currency = CurrencyCode.PLN)
@@ -39,13 +38,13 @@ class ComputeBalanceUseCaseTest {
             expenses = emptyList(),
             expenseShares = emptyList()
         )
-        assertTrue(result.isEmpty())
+        Assert.assertTrue(result.isEmpty())
     }
 
     @Test
     fun `two members - single expense split equally`() {
         val expense = Expense(
-            id = UUID.randomUUID(),
+            id = 1,
             groupId = groupId,
             paidByMemberId = memberA,
             createdAt = Instant.now(),
@@ -55,11 +54,13 @@ class ComputeBalanceUseCaseTest {
 
         val shares = listOf(
             ExpenseShare(
+                id = 1,
                 expenseId = expense.id,
                 memberId = memberA,
                 sharedAmount = pln(5_000)
             ),
             ExpenseShare(
+                id = 2,
                 expenseId = expense.id,
                 memberId = memberB,
                 sharedAmount = pln(5_000)
@@ -75,13 +76,13 @@ class ComputeBalanceUseCaseTest {
             Triple(memberB.toString(), memberA.toString(), 5_000L)
         ).sortedWith(compareBy({ it.first }, { it.second }, { it.third }))
 
-        assertEquals(expected, result)
+        Assert.assertEquals(expected, result)
     }
 
     @Test
     fun `member can be debtor only - appears only in shares`() {
         val expense = Expense(
-            id = UUID.randomUUID(),
+            id = 1,
             groupId = groupId,
             paidByMemberId = memberA,
             createdAt = Instant.now(),
@@ -90,9 +91,24 @@ class ComputeBalanceUseCaseTest {
         )
 
         val shares = listOf(
-            ExpenseShare(expenseId = expense.id, memberId = memberA, sharedAmount = pln(4_000)),
-            ExpenseShare(expenseId = expense.id, memberId = memberB, sharedAmount = pln(4_000)),
-            ExpenseShare(expenseId = expense.id, memberId = memberD, sharedAmount = pln(4_000)),
+            ExpenseShare(
+                id = 1,
+                expenseId = expense.id,
+                memberId = memberA,
+                sharedAmount = pln(4_000)
+            ),
+            ExpenseShare(
+                id = 2,
+                expenseId = expense.id,
+                memberId = memberB,
+                sharedAmount = pln(4_000)
+            ),
+            ExpenseShare(
+                id = 3,
+                expenseId = expense.id,
+                memberId = memberD,
+                sharedAmount = pln(4_000)
+            ),
         )
 
         val result = computeBalance(
@@ -105,7 +121,7 @@ class ComputeBalanceUseCaseTest {
             Triple(memberD.toString(), memberA.toString(), 4_000L)
         ).sortedWith(compareBy({ it.first }, { it.second }, { it.third }))
 
-        assertEquals(expected, result)
+        Assert.assertEquals(expected, result)
     }
 
     @Test
@@ -124,7 +140,7 @@ class ComputeBalanceUseCaseTest {
          */
 
         val e1 = Expense(
-            id = UUID.randomUUID(),
+            id = 1,
             groupId = groupId,
             paidByMemberId = memberA,
             createdAt = Instant.now(),
@@ -132,7 +148,7 @@ class ComputeBalanceUseCaseTest {
             amount = pln(9_000)
         )
         val e2 = Expense(
-            id = UUID.randomUUID(),
+            id = 2,
             groupId = groupId,
             paidByMemberId = memberB,
             createdAt = Instant.now(),
@@ -141,12 +157,12 @@ class ComputeBalanceUseCaseTest {
         )
 
         val shares = listOf(
-            ExpenseShare(expenseId = e1.id, memberId = memberA, sharedAmount = pln(3_000)),
-            ExpenseShare(expenseId = e1.id, memberId = memberB, sharedAmount = pln(3_000)),
-            ExpenseShare(expenseId = e1.id, memberId = memberC, sharedAmount = pln(3_000)),
-            ExpenseShare(expenseId = e2.id, memberId = memberA, sharedAmount = pln(1_000)),
-            ExpenseShare(expenseId = e2.id, memberId = memberB, sharedAmount = pln(1_000)),
-            ExpenseShare(expenseId = e2.id, memberId = memberC, sharedAmount = pln(1_000)),
+            ExpenseShare(id = 1, expenseId = e1.id, memberId = memberA, sharedAmount = pln(3_000)),
+            ExpenseShare(id = 2, expenseId = e1.id, memberId = memberB, sharedAmount = pln(3_000)),
+            ExpenseShare(id = 3, expenseId = e1.id, memberId = memberC, sharedAmount = pln(3_000)),
+            ExpenseShare(id = 4, expenseId = e2.id, memberId = memberA, sharedAmount = pln(1_000)),
+            ExpenseShare(id = 5, expenseId = e2.id, memberId = memberB, sharedAmount = pln(1_000)),
+            ExpenseShare(id = 6, expenseId = e2.id, memberId = memberC, sharedAmount = pln(1_000)),
         )
 
         val result = computeBalance(
@@ -159,7 +175,7 @@ class ComputeBalanceUseCaseTest {
             Triple(memberC.toString(), memberA.toString(), 4_000L),
         ).sortedWith(compareBy({ it.first }, { it.second }, { it.third }))
 
-        assertEquals(expected, result)
+        Assert.assertEquals(expected, result)
     }
 
     @Test
@@ -174,7 +190,7 @@ class ComputeBalanceUseCaseTest {
             net:  A=+60, B=+20, C=-40, D=-40
          */
         val e1 = Expense(
-            id = UUID.randomUUID(),
+            id = 1,
             groupId = groupId,
             paidByMemberId = memberA,
             createdAt = Instant.now(),
@@ -182,7 +198,7 @@ class ComputeBalanceUseCaseTest {
             amount = pln(10_000)
         )
         val e2 = Expense(
-            id = UUID.randomUUID(),
+            id = 2,
             groupId = groupId,
             paidByMemberId = memberB,
             createdAt = Instant.now(),
@@ -191,13 +207,13 @@ class ComputeBalanceUseCaseTest {
         )
 
         val shares = listOf(
-            ExpenseShare(expenseId = e1.id, memberId = memberA, sharedAmount = pln(2_000)),
-            ExpenseShare(expenseId = e1.id, memberId = memberB, sharedAmount = pln(2_000)),
-            ExpenseShare(expenseId = e1.id, memberId = memberC, sharedAmount = pln(2_000)),
-            ExpenseShare(expenseId = e1.id, memberId = memberD, sharedAmount = pln(4_000)),
-            ExpenseShare(expenseId = e2.id, memberId = memberA, sharedAmount = pln(2_000)),
-            ExpenseShare(expenseId = e2.id, memberId = memberB, sharedAmount = pln(2_000)),
-            ExpenseShare(expenseId = e2.id, memberId = memberC, sharedAmount = pln(2_000)),
+            ExpenseShare(id = 1, expenseId = e1.id, memberId = memberA, sharedAmount = pln(2_000)),
+            ExpenseShare(id = 2, expenseId = e1.id, memberId = memberB, sharedAmount = pln(2_000)),
+            ExpenseShare(id = 3, expenseId = e1.id, memberId = memberC, sharedAmount = pln(2_000)),
+            ExpenseShare(id = 4, expenseId = e1.id, memberId = memberD, sharedAmount = pln(4_000)),
+            ExpenseShare(id = 5, expenseId = e2.id, memberId = memberA, sharedAmount = pln(2_000)),
+            ExpenseShare(id = 6, expenseId = e2.id, memberId = memberB, sharedAmount = pln(2_000)),
+            ExpenseShare(id = 7, expenseId = e2.id, memberId = memberC, sharedAmount = pln(2_000)),
         )
 
         val lines = computeBalance(
@@ -206,9 +222,9 @@ class ComputeBalanceUseCaseTest {
         )
 
         val totalTransferred = lines.sumOf { it.amount.minorUnits }
-        assertEquals(8_000L, totalTransferred)
+        Assert.assertEquals(8_000L, totalTransferred)
 
-        val net = HashMap<UUID, Long>()
+        val net = HashMap<Int, Long>()
 
         net.merge(memberA, 10_000, Long::plus)
         net.merge(memberB, 6_000, Long::plus)
@@ -223,19 +239,19 @@ class ComputeBalanceUseCaseTest {
             net.merge(l.toMemberId, -l.amount.minorUnits, Long::plus)
         }
 
-        assertEquals(0L, net[memberA])
-        assertEquals(0L, net[memberB])
-        assertEquals(0L, net[memberC])
-        assertEquals(0L, net[memberD])
+        Assert.assertEquals(0L, net[memberA])
+        Assert.assertEquals(0L, net[memberB])
+        Assert.assertEquals(0L, net[memberC])
+        Assert.assertEquals(0L, net[memberD])
 
-        assertTrue(lines.all { it.amount.minorUnits > 0 })
-        assertTrue(lines.all { it.amount.currency == CurrencyCode.PLN })
+        Assert.assertTrue(lines.all { it.amount.minorUnits > 0 })
+        Assert.assertTrue(lines.all { it.amount.currency == CurrencyCode.PLN })
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `throws when total paid differs from total owed`() {
         val expense = Expense(
-            id = UUID.randomUUID(),
+            id = 1,
             groupId = groupId,
             paidByMemberId = memberA,
             createdAt = Instant.now(),
@@ -244,8 +260,18 @@ class ComputeBalanceUseCaseTest {
         )
 
         val shares = listOf(
-            ExpenseShare(expenseId = expense.id, memberId = memberA, sharedAmount = pln(4_000)),
-            ExpenseShare(expenseId = expense.id, memberId = memberB, sharedAmount = pln(4_000)),
+            ExpenseShare(
+                id = 1,
+                expenseId = expense.id,
+                memberId = memberA,
+                sharedAmount = pln(4_000)
+            ),
+            ExpenseShare(
+                id = 2,
+                expenseId = expense.id,
+                memberId = memberB,
+                sharedAmount = pln(4_000)
+            ),
         )
 
         computeBalance(expenses = listOf(expense), expenseShares = shares)
@@ -254,7 +280,7 @@ class ComputeBalanceUseCaseTest {
     @Test(expected = IllegalArgumentException::class)
     fun `throws when mixed currencies provided`() {
         val expense = Expense(
-            id = UUID.randomUUID(),
+            id = 1,
             groupId = groupId,
             paidByMemberId = memberA,
             createdAt = Instant.now(),
@@ -264,11 +290,13 @@ class ComputeBalanceUseCaseTest {
 
         val shares = listOf(
             ExpenseShare(
+                id = 1,
                 expenseId = expense.id,
                 memberId = memberA,
                 sharedAmount = MonetaryAmount(5_000, CurrencyCode.EUR)
             ),
             ExpenseShare(
+                id = 2,
                 expenseId = expense.id,
                 memberId = memberB,
                 sharedAmount = MonetaryAmount(5_000, CurrencyCode.EUR)
@@ -283,7 +311,7 @@ class ComputeBalanceUseCaseTest {
         val g2 = UUID.fromString("00000000-0000-0000-0000-000000000002")
 
         val e1 = Expense(
-            id = UUID.randomUUID(),
+            id = 1,
             groupId = groupId,
             paidByMemberId = memberA,
             createdAt = Instant.now(),
@@ -291,8 +319,8 @@ class ComputeBalanceUseCaseTest {
             amount = pln(5_000)
         )
         val e2 = Expense(
-            id = UUID.randomUUID(),
-            groupId = g2,
+            id = 2,
+            groupId = 2,
             paidByMemberId = memberA,
             createdAt = Instant.now(),
             name = "e2",
@@ -300,10 +328,10 @@ class ComputeBalanceUseCaseTest {
         )
 
         val shares = listOf(
-            ExpenseShare(expenseId = e1.id, memberId = memberA, sharedAmount = pln(2_500)),
-            ExpenseShare(expenseId = e1.id, memberId = memberB, sharedAmount = pln(2_500)),
-            ExpenseShare(expenseId = e2.id, memberId = memberA, sharedAmount = pln(2_500)),
-            ExpenseShare(expenseId = e2.id, memberId = memberB, sharedAmount = pln(2_500)),
+            ExpenseShare(id = 1, expenseId = e1.id, memberId = memberA, sharedAmount = pln(2_500)),
+            ExpenseShare(id = 2, expenseId = e1.id, memberId = memberB, sharedAmount = pln(2_500)),
+            ExpenseShare(id = 3, expenseId = e2.id, memberId = memberA, sharedAmount = pln(2_500)),
+            ExpenseShare(id = 4, expenseId = e2.id, memberId = memberB, sharedAmount = pln(2_500)),
         )
 
         computeBalance(expenses = listOf(e1, e2), expenseShares = shares)

@@ -1,10 +1,8 @@
 package com.expense_management.domain.model
 
-import java.util.UUID
-
 data class GroupMember(
-    val id: UUID,
-    val groupId: UUID,
+    val id: Int,
+    val groupId: Int,
     val displayName: String,
     val publicKey: PublicKey,
     val role: GroupRole

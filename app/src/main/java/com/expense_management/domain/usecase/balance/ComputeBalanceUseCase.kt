@@ -1,11 +1,11 @@
-package com.expense_management.domain.usecase
+package com.expense_management.domain.usecase.balance
 
 import com.expense_management.domain.model.BalanceLine
 import com.expense_management.domain.model.CurrencyCode
 import com.expense_management.domain.model.Expense
 import com.expense_management.domain.model.ExpenseShare
 import com.expense_management.domain.model.MonetaryAmount
-import java.util.UUID
+import kotlin.collections.iterator
 
 // TODO: Add this class as DI component
 class ComputeBalanceUseCase {
@@ -17,7 +17,7 @@ class ComputeBalanceUseCase {
         checkIfAllExpenseSharesPointingToExpense(expenses, expenseShares)
         val currency = getCurrency(expenses, expenseShares)
 
-        val netByMemberId = mutableMapOf<UUID, Long>()
+        val netByMemberId = mutableMapOf<Int, Long>()
         for (expense in expenses) {
             netByMemberId.merge(expense.paidByMemberId, expense.amount.minorUnits, Long::plus)
         }
@@ -116,7 +116,7 @@ class ComputeBalanceUseCase {
     }
 
     private data class ParticipantNet(
-        val memberId: UUID,
+        val memberId: Int,
         var amount: Long
     )
 }
