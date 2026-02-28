@@ -9,11 +9,9 @@ data class ExpenseShareEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
 
-    // TODO: Implement many to one
     @ColumnInfo(name = "expense_id")
     val expenseId: Int,
 
-    // TODO: Implement many to one
     @ColumnInfo(name = "member_id")
     val memberId: Int,
 

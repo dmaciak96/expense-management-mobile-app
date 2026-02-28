@@ -5,9 +5,7 @@ import com.expense_management.domain.model.CurrencyCode
 import com.expense_management.domain.model.Expense
 import com.expense_management.domain.model.ExpenseShare
 import com.expense_management.domain.model.MonetaryAmount
-import kotlin.collections.iterator
 
-// TODO: Add this class as DI component
 class ComputeBalanceUseCase {
     operator fun invoke(
         expenses: List<Expense>,

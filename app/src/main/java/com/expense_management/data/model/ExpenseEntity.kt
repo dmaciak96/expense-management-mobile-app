@@ -10,11 +10,9 @@ data class ExpenseEntity(
     val id: Int = 0,
 
     @ColumnInfo(name = "group_id")
-    // TODO: Implement many to one
     val groupId: Int,
 
     @ColumnInfo(name = "paid_by_member_id")
-    // TODO: Implement many to one
     val paidByMemberId: Int,
 
     @ColumnInfo(name = "created_at")

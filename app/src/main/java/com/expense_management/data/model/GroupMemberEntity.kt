@@ -9,7 +9,6 @@ data class GroupMemberEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
-    //TODO: Implement Many to One
     @ColumnInfo(name = "group_id")
     val groupId: Int,
 

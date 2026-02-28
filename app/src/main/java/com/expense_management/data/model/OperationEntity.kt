@@ -9,11 +9,9 @@ data class OperationEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
 
-    // TODO: Implement many to one
     @ColumnInfo(name = "group_id")
     val groupId: Int,
 
-    // TODO: Implement many to one
     @ColumnInfo(name = "operation_author_id")
     val operationAuthorId: Int,
 
