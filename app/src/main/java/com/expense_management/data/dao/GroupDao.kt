@@ -14,6 +14,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface GroupDao {
 
+    @Insert
+    suspend fun insert(group: GroupEntity)
+
+    @Delete
+    suspend fun delete(group: GroupEntity)
+
+    @Update
+    suspend fun update(group: GroupEntity)
+
     @Query(
         """
             SELECT * FROM `groups`
@@ -29,15 +38,6 @@ interface GroupDao {
         """
     )
     fun getById(id: Int): Flow<GroupEntity?>
-
-    @Insert
-    suspend fun insert(group: GroupEntity)
-
-    @Delete
-    suspend fun delete(group: GroupEntity)
-
-    @Update
-    suspend fun update(group: GroupEntity)
 
     @Query(
         """

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "operations")
 data class OperationEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int = 0,
 
     @ColumnInfo(name = "group_id")
     val groupId: Int,

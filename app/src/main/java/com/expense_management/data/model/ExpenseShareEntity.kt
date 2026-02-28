@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "expense_shares")
 data class ExpenseShareEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int = 0,
 
     @ColumnInfo(name = "expense_id")
     val expenseId: Int,

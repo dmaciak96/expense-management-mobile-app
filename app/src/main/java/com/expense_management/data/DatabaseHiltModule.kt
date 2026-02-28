@@ -3,8 +3,6 @@ package com.expense_management.data
 import android.content.Context
 import androidx.room.Room
 import com.expense_management.R
-import com.expense_management.data.dao.GroupDao
-import com.expense_management.data.dao.GroupMemberDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
