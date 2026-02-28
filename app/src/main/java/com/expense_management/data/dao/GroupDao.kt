@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.expense_management.data.model.ExpenseEntity
 import com.expense_management.data.model.GroupEntity
 import com.expense_management.data.model.GroupMemberEntity
@@ -21,11 +22,22 @@ interface GroupDao {
     )
     fun getAll(): Flow<List<GroupEntity>>
 
+    @Query(
+        """
+            SELECT * FROM `groups` AS g
+            WHERE g.id = :id
+        """
+    )
+    fun getById(id: Int): Flow<GroupEntity?>
+
     @Insert
     suspend fun insert(group: GroupEntity)
 
     @Delete
     suspend fun delete(group: GroupEntity)
+
+    @Update
+    suspend fun update(group: GroupEntity)
 
     @Query(
         """
