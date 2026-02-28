@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.expense_management.R
 import com.expense_management.data.dao.GroupDao
+import com.expense_management.data.dao.GroupMemberDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +28,17 @@ object DatabaseHiltModule {
     }
 
     @Provides
-    fun provideGroupDao(appDb: AppDb): GroupDao {
-        return appDb.groupDao()
-    }
+    fun provideExpenseDao(appDb: AppDb) = appDb.expenseDao()
+
+    @Provides
+    fun provideExpenseShareDao(appDb: AppDb) = appDb.expenseShareDao()
+
+    @Provides
+    fun provideGroupDao(appDb: AppDb) = appDb.groupDao()
+
+    @Provides
+    fun provideGroupMemberDao(appDb: AppDb) = appDb.groupMemberDao()
+
+    @Provides
+    fun provideOperationDao(appDb: AppDb) = appDb.operationDao()
 }
