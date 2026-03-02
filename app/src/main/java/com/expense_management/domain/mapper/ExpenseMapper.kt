@@ -1,0 +1,40 @@
+package com.expense_management.domain.mapper
+
+import com.expense_management.data.model.ExpenseEntity
+import com.expense_management.data.model.ExpenseShareEntity
+import com.expense_management.domain.model.CurrencyCode
+import com.expense_management.domain.model.Expense
+import com.expense_management.domain.model.MonetaryAmount
+import java.time.Instant
+
+object ExpenseMapper {
+    fun toEntity(expense: Expense) = ExpenseEntity(
+        id = expense.id,
+        groupId = expense.groupId,
+        paidByMemberId = expense.paidByMemberId,
+        createdAt = expense.createdAt.toEpochMilli(),
+        name = expense.name,
+        minorUnits = expense.amount.minorUnits,
+        currency = expense.amount.currency.name
+    )
+
+    fun toDomain(expenseEntity: ExpenseEntity) = Expense(
+        id = expenseEntity.id,
+        groupId = expenseEntity.groupId,
+        paidByMemberId = expenseEntity.paidByMemberId,
+        createdAt = Instant.ofEpochMilli(expenseEntity.createdAt),
+        name = expenseEntity.name,
+        amount = MonetaryAmount(
+            expenseEntity.minorUnits,
+            CurrencyCode.valueOf(expenseEntity.currency)
+        )
+    )
+
+    fun toDomainList(expenseEntities: List<ExpenseEntity>) =
+        expenseEntities.map { toDomain(it) }
+
+    fun toDomainResultMap(entityResultMap: Map<ExpenseEntity, List<ExpenseShareEntity>>) =
+        entityResultMap.map { (expenseEntity, expenseShareEntities) ->
+            toDomain(expenseEntity) to ExpenseShareMapper.toDomainList(expenseShareEntities)
+        }.toMap()
+}

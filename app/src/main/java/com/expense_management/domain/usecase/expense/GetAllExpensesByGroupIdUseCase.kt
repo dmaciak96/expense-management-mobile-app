@@ -1,19 +1,19 @@
-package com.expense_management.domain.usecase.group
+package com.expense_management.domain.usecase.expense
 
 import com.expense_management.core.common.OperationResult.Error
 import com.expense_management.core.common.OperationResult.Loading
 import com.expense_management.core.common.OperationResult.Success
-import com.expense_management.data.repository.GroupRepository
-import com.expense_management.domain.mapper.GroupMapper
+import com.expense_management.data.repository.ExpenseRepository
+import com.expense_management.domain.mapper.ExpenseMapper
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.map
 
-class GetAllGroupsUseCase @Inject constructor(private val repository: GroupRepository) {
-    operator fun invoke() =
-        repository.getAll()
+class GetAllExpensesByGroupIdUseCase @Inject constructor(private val repository: ExpenseRepository) {
+    operator fun invoke(groupId: Int) =
+        repository.getExpensesByGroupId(groupId)
             .map { result ->
                 when (result) {
-                    is Success -> Success(GroupMapper.toDomainList(result.data))
+                    is Success -> Success(ExpenseMapper.toDomainList(result.data))
                     is Loading -> Loading
                     is Error -> Error(result.exception)
                 }

@@ -8,12 +8,12 @@ import com.expense_management.domain.mapper.GroupMapper
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.map
 
-class GetAllGroupsUseCase @Inject constructor(private val repository: GroupRepository) {
+class GetAllGroupsAndOperationsUseCase @Inject constructor(private val repository: GroupRepository) {
     operator fun invoke() =
-        repository.getAll()
+        repository.getGroupAndOperations()
             .map { result ->
                 when (result) {
-                    is Success -> Success(GroupMapper.toDomainList(result.data))
+                    is Success -> Success(GroupMapper.toDomainResultMap(result.data))
                     is Loading -> Loading
                     is Error -> Error(result.exception)
                 }

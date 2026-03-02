@@ -5,9 +5,8 @@ import com.expense_management.domain.mapper.GroupMapper
 import com.expense_management.domain.model.Group
 import jakarta.inject.Inject
 
-class DeleteGroupUseCase @Inject constructor(private val repository: GroupRepository) {
+class UpdateGroupUseCase @Inject constructor(private val repository: GroupRepository) {
     // TODO: Add validation
     suspend operator fun invoke(group: Group) =
-        repository.delete(GroupMapper.toEntity(group))
-
+        repository.update(GroupMapper.toEntity(group))
 }
