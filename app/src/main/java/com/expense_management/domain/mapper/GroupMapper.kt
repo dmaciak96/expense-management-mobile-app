@@ -23,16 +23,19 @@ object GroupMapper {
     fun toDomainList(groupEntities: List<GroupEntity>) =
         groupEntities.map { toDomain(it) }
 
+    @JvmName("toGroupAndExpensesResultMap")
     fun toDomainResultMap(entityResultMap: Map<GroupEntity, List<ExpenseEntity>>) =
         entityResultMap.map { (groupEntity, expenseEntities) ->
             toDomain(groupEntity) to ExpenseMapper.toDomainList(expenseEntities)
         }.toMap()
 
+    @JvmName("toGroupAndMembersResultMap")
     fun toDomainResultMap(entityResultMap: Map<GroupEntity, List<GroupMemberEntity>>) =
         entityResultMap.map { (groupEntity, groupMemberEntities) ->
             toDomain(groupEntity) to GroupMemberMapper.toDomainList(groupMemberEntities)
         }.toMap()
 
+    @JvmName("toGroupAndOperationsResultMap")
     fun toDomainResultMap(entityResultMap: Map<GroupEntity, List<OperationEntity>>) =
         entityResultMap.map { (groupEntity, operationEntities) ->
             toDomain(groupEntity) to OperationMapper.toDomainList(operationEntities)

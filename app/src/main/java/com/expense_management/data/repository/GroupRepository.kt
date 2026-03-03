@@ -12,7 +12,9 @@ import com.expense_management.data.model.GroupMemberEntity
 import com.expense_management.data.model.OperationEntity
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 
 class GroupRepository @Inject constructor(
     private val groupDao: GroupDao
@@ -49,79 +51,78 @@ class GroupRepository @Inject constructor(
     }
 
     fun getAll(): Flow<OperationResult<List<GroupEntity>>> =
-        flow {
-            emit(Loading)
-            try {
-                Log.i(TAG, "Getting all groups from db")
-                groupDao.getAll().collect {
-                    emit(Success(it))
-                }
-                Log.i(TAG, "Getting all groups finished successfully")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to get all groups from db: ${e.message}")
-                emit(Error(e))
+        groupDao.getAll()
+            .map<List<GroupEntity>, OperationResult<List<GroupEntity>>> {
+                Success(it)
             }
-        }
+            .onStart {
+                Log.i(TAG, "Getting all groups from db")
+                emit(Loading)
+            }
+            .catch {
+                Log.e(TAG, "Failed to get all groups from db: ${it.message}")
+                emit(Error(it))
+            }
 
     fun getById(id: Int): Flow<OperationResult<GroupEntity?>> =
-        flow {
-            emit(Loading)
-            try {
+        groupDao.getById(id)
+            .map<GroupEntity?, OperationResult<GroupEntity?>> { Success(it) }
+            .onStart {
                 Log.i(TAG, "Getting group by id $id")
-                groupDao.getById(id).collect {
-                    emit(Success(it))
-                }
-                Log.i(TAG, "Getting group by id $id finished successfully")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to get group by id $id: ${e.message}")
-                emit(Error(e))
+                emit(Loading)
             }
-        }
+            .catch {
+                Log.e(TAG, "Failed to get group by id $id: ${it.message}")
+                emit(Error(it))
+            }
 
     fun getGroupAndGroupMembers(): Flow<OperationResult<Map<GroupEntity, List<GroupMemberEntity>>>> =
-        flow {
-            emit(Loading)
-            try {
-                Log.i(TAG, "Getting all groups with members")
-                groupDao.getGroupAndGroupMembers().collect {
-                    emit(Success(it))
-                }
-                Log.i(TAG, "Getting all groups with members finished successfully")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to get groups with members: ${e.message}")
-                emit(Error(e))
+        groupDao.getGroupAndGroupMembers()
+            .map<Map<GroupEntity, List<GroupMemberEntity>>, OperationResult<Map<GroupEntity, List<GroupMemberEntity>>>> {
+                Success(
+                    it
+                )
             }
-        }
+            .onStart {
+                Log.i(TAG, "Getting all groups with members")
+                emit(Loading)
+            }
+            .catch {
+                Log.e(TAG, "Failed to get groups with members: ${it.message}")
+                emit(Error(it))
+            }
+
 
     fun getGroupAndExpenses(): Flow<OperationResult<Map<GroupEntity, List<ExpenseEntity>>>> =
-        flow {
-            emit(Loading)
-            try {
-                Log.i(TAG, "Getting all groups with expenses")
-                groupDao.getGroupAndExpenses().collect {
-                    emit(Success(it))
-                }
-                Log.i(TAG, "Getting all groups with expenses finished successfully")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to get groups with expenses: ${e.message}")
-                emit(Error(e))
+        groupDao.getGroupAndExpenses()
+            .map<Map<GroupEntity, List<ExpenseEntity>>, OperationResult<Map<GroupEntity, List<ExpenseEntity>>>> {
+                Success(
+                    it
+                )
             }
-        }
+            .onStart {
+                Log.i(TAG, "Getting all groups with expenses")
+                emit(Loading)
+            }
+            .catch {
+                Log.e(TAG, "Failed to get groups with expenses: ${it.message}")
+                emit(Error(it))
+            }
 
     fun getGroupAndOperations(): Flow<OperationResult<Map<GroupEntity, List<OperationEntity>>>> =
-        flow {
-            emit(Loading)
-            try {
-                Log.i(TAG, "Getting all groups with operations")
-                groupDao.getGroupAndOperations().collect {
-                    emit(Success(it))
-                }
-                Log.i(TAG, "Getting all groups with operations finished successfully")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to get groups with operations: ${e.message}")
-                emit(Error(e))
+        groupDao.getGroupAndOperations()
+            .map<Map<GroupEntity, List<OperationEntity>>, OperationResult<Map<GroupEntity, List<OperationEntity>>>> {
+                Success(
+                    it
+                )
             }
-        }
+            .onStart {
+                Log.i(TAG, "Getting all groups with operations")
+                emit(Loading)
+            }.catch {
+                Log.e(TAG, "Failed to get groups with operations: ${it.message}")
+                emit(Error(it))
+            }
 
     companion object {
         private val TAG = GroupRepository::class.simpleName

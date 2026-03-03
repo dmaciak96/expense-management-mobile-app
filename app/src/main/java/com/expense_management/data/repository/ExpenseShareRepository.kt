@@ -9,7 +9,9 @@ import com.expense_management.data.dao.ExpenseShareDao
 import com.expense_management.data.model.ExpenseShareEntity
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 
 class ExpenseShareRepository @Inject constructor(
     private val expenseShareDao: ExpenseShareDao
@@ -54,75 +56,66 @@ class ExpenseShareRepository @Inject constructor(
         Error(e)
     }
 
-    fun getAll(): Flow<OperationResult<List<ExpenseShareEntity>>> = flow {
-        emit(Loading)
-        try {
-            Log.i(TAG, "Getting all expense shares from db")
-            expenseShareDao.getAll().collect {
-                emit(Success(it))
+    fun getAll(): Flow<OperationResult<List<ExpenseShareEntity>>> =
+        expenseShareDao.getAll()
+            .map<List<ExpenseShareEntity>, OperationResult<List<ExpenseShareEntity>>> {
+                Success(it)
             }
-            Log.i(TAG, "Getting all expense shares finished successfully")
-        } catch (e: Exception) {
-            Log.i(TAG, "Failed to get all expense shares from db: ${e.message}")
-            emit(Error(e))
-        }
-    }
+            .onStart {
+                Log.i(TAG, "Getting all expense shares from db")
+                emit(Loading)
+            }
+            .catch {
+                Log.e(TAG, "Failed to get all expense shares from db: ${it.message}")
+                emit(Error(it))
+            }
 
-    fun getById(id: Int): Flow<OperationResult<ExpenseShareEntity?>> = flow {
-        emit(Loading)
-        try {
-            Log.i(TAG, "Getting expense share by id $id")
-            expenseShareDao.getById(id).collect {
-                emit(Success(it))
+    fun getById(id: Int): Flow<OperationResult<ExpenseShareEntity?>> =
+        expenseShareDao.getById(id)
+            .map<ExpenseShareEntity?, OperationResult<ExpenseShareEntity?>> {
+                Success(it)
             }
-            Log.i(TAG, "Getting expense share by id $id finished successfully")
-        } catch (e: Exception) {
-            Log.i(TAG, "Failed to get expense share by id $id: ${e.message}")
-            emit(Error(e))
-        }
-    }
+            .onStart {
+                Log.i(TAG, "Getting expense share by id $id")
+                emit(Loading)
+            }
+            .catch {
+                Log.e(TAG, "Failed to get expense share by id $id: ${it.message}")
+                emit(Error(it))
+            }
 
     fun getExpenseSharesByExpenseId(expenseId: Int): Flow<OperationResult<List<ExpenseShareEntity>>> =
-        flow {
-            emit(Loading)
-            try {
-                Log.i(TAG, "Getting all expense shares by expense id $expenseId")
-                expenseShareDao.getExpenseSharesByExpenseId(expenseId).collect {
-                    emit(Success(it))
-                }
-                Log.i(
-                    TAG,
-                    "Getting all expense shares by expense id $expenseId finished successfully"
-                )
-            } catch (e: Exception) {
-                Log.i(
-                    TAG,
-                    "Failed to get all expense shares by expense id $expenseId: ${e.message}"
-                )
-                emit(Error(e))
+        expenseShareDao.getExpenseSharesByExpenseId(expenseId)
+            .map<List<ExpenseShareEntity>, OperationResult<List<ExpenseShareEntity>>> {
+                Success(it)
             }
-        }
+            .onStart {
+                Log.i(TAG, "Getting all expense shares by expense id $expenseId")
+                emit(Loading)
+            }.catch {
+                Log.e(
+                    TAG,
+                    "Failed to get all expense shares by expense id $expenseId: ${it.message}"
+                )
+                emit(Error(it))
+            }
 
     fun getExpenseSharesByGroupMemberId(groupMemberId: Int): Flow<OperationResult<List<ExpenseShareEntity>>> =
-        flow {
-            emit(Loading)
-            try {
-                Log.i(TAG, "Getting all expense shares by group member id $groupMemberId")
-                expenseShareDao.getExpenseSharesByGroupMemberId(groupMemberId).collect {
-                    emit(Success(it))
-                }
-                Log.i(
-                    TAG,
-                    "Getting all expense shares by group member id $groupMemberId finished successfully"
-                )
-            } catch (e: Exception) {
-                Log.i(
-                    TAG,
-                    "Failed to get all expense shares by group member id $groupMemberId: ${e.message}"
-                )
-                emit(Error(e))
+        expenseShareDao.getExpenseSharesByGroupMemberId(groupMemberId)
+            .map<List<ExpenseShareEntity>, OperationResult<List<ExpenseShareEntity>>> {
+                Success(it)
             }
-        }
+            .onStart {
+                Log.i(TAG, "Getting all expense shares by group member id $groupMemberId")
+                emit(Loading)
+            }
+            .catch {
+                Log.e(
+                    TAG,
+                    "Failed to get all expense shares by group member id $groupMemberId: ${it.message}"
+                )
+                emit(Error(it))
+            }
 
     companion object {
         private val TAG = ExpenseShareRepository::class.simpleName

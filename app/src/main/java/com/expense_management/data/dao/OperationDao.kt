@@ -14,12 +14,6 @@ interface OperationDao {
     @Insert
     suspend fun insert(operation: OperationEntity)
 
-    @Delete
-    suspend fun delete(operation: OperationEntity)
-
-    @Update
-    suspend fun update(operation: OperationEntity)
-
     @Query(
         """
             SELECT * FROM `operations`

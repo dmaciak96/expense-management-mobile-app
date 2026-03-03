@@ -12,10 +12,11 @@ This application was created for educational purposes. It contains the following
 * ```core/``` - Common components such as security and utilities,
 * ```feature/``` - MVVM architecture implementation for each application screen.
 
-# Testing
-
-## Running Unit Tests
-
-## Running Integration Tests
-
-## Running Architecture Tests
+# Troubleshooting
+## Virtual Device not starting from Android Studio
+Run the following commands (works on Windows):
+* ```taskkill /F /IM emulator.exe```
+* ```taskkill /F /IM adb.exe```
+* ```taskkill /F /IM qemu-system-x86_64.exe```
+* ```emulator -avd "Small_Phone" -no-snapshot -gpu swiftshader_indirect``` - "Small_Phone" is device name
+After last command device will start in separate window
