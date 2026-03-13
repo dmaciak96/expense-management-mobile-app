@@ -11,6 +11,7 @@ composeBom = "2026.02.01"
 hilt = "2.59.2"
 ksp = "2.3.6"
 room = "2.8.4"
+google-fonts = "1.10.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,6 +34,7 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 room-android-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+google-fonts = { group= "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "google-fonts"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
