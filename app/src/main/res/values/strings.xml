@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Expense management</string>
+    <string name="get_all_groups_error">Wystąpił błąd</string>
+    <string name="empty_groups">Brak grup</string>
 </resources>
