@@ -9,6 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.expense_management.R
 import com.expense_management.feature.group.model.AddGroupUiState
+import kotlinx.serialization.Serializable
+
+@Serializable
+object AddGroupRoute
 
 @Composable
 fun AddGroupDialog(

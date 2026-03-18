@@ -3,12 +3,13 @@ package com.expense_management.feature.group.ui.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.expense_management.R
-import com.expense_management.app.Routes
 import com.expense_management.core.common.OperationResult
 import com.expense_management.domain.usecase.group.GetGroupByIdUseCase
 import com.expense_management.feature.group.mapper.GroupUiMapper
 import com.expense_management.feature.group.model.GroupDetailsUiState
+import com.expense_management.feature.group.ui.screen.GroupDetailsRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,16 +17,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-
 @HiltViewModel
 class GroupDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getGroupByIdUseCase: GetGroupByIdUseCase,
     private val groupUiMapper: GroupUiMapper,
 ) : ViewModel() {
-    private val groupId: Int =
-        checkNotNull(savedStateHandle[Routes.GROUP_ID_ARG]).toString().trim().toInt()
-
+    private val groupId: Int = savedStateHandle.toRoute<GroupDetailsRoute>().id
     private val _uiState = MutableStateFlow(GroupDetailsUiState(isLoading = true))
     val uiState: StateFlow<GroupDetailsUiState> = _uiState.asStateFlow()
 

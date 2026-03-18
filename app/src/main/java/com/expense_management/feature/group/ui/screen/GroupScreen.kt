@@ -21,11 +21,15 @@ import androidx.compose.ui.unit.dp
 import com.expense_management.R
 import com.expense_management.feature.group.model.GroupListUiState
 import com.expense_management.feature.group.model.GroupUiModel
+import kotlinx.serialization.Serializable
+
+@Serializable
+object GroupListRoute
 
 @Composable
 fun GroupsScreen(
     uiState: GroupListUiState,
-    onGroupClick: (Int) -> Unit,
+    onGroupClick: (Int, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -62,7 +66,7 @@ fun GroupsScreen(
                         items = uiState.groups,
                         key = { it.id }
                     ) { group ->
-                        GroupItem(group = group, onClick = { onGroupClick(group.id) })
+                        GroupItem(group = group, onClick = { onGroupClick(group.id, group.name) })
                     }
                 }
             }

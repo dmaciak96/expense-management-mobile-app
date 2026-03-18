@@ -14,6 +14,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.expense_management.R
 import com.expense_management.feature.group.model.GroupDetailsUiState
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class GroupDetailsRoute(
+    val id: Int,
+    val name: String
+)
 
 @Composable
 fun GroupDetailsScreen(uiState: GroupDetailsUiState) {

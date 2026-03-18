@@ -9,21 +9,33 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.expense_management.R
 import com.expense_management.app.ui.theme.AppTheme
 import com.expense_management.core.component.FabButton
 import com.expense_management.core.component.TopApplicationBar
-import com.expense_management.feature.group.ui.AddGroupRoute
-import com.expense_management.feature.group.ui.GroupDetailsRoute
-import com.expense_management.feature.group.ui.GroupsRoute
+import com.expense_management.feature.group.ui.screen.AddGroupDialog
+import com.expense_management.feature.group.ui.screen.AddGroupRoute
+import com.expense_management.feature.group.ui.screen.GroupDetailsRoute
+import com.expense_management.feature.group.ui.screen.GroupDetailsScreen
+import com.expense_management.feature.group.ui.screen.GroupListRoute
+import com.expense_management.feature.group.ui.screen.GroupsScreen
+import com.expense_management.feature.group.ui.viewmodel.AddGroupViewModel
+import com.expense_management.feature.group.ui.viewmodel.GroupDetailsViewModel
+import com.expense_management.feature.group.ui.viewmodel.GroupListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,13 +54,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App() {
     val navController = rememberNavController()
-    val backStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry.value?.destination?.route
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        floatingActionButton = { ConfigureFabButton(currentRoute, navController) },
-        topBar = { ConfigureTopBar(currentRoute, navController) },
+        floatingActionButton = { ConfigureFabButton(navController) },
+        topBar = { ConfigureTopBar(navController) },
         // TODO: Add Bottom Bar Configuration for Group Details View
     ) { innerPadding ->
         AppNavHost(
@@ -65,28 +74,47 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Routes.GROUPS,
+        startDestination = GroupListRoute,
         modifier = modifier
     ) {
-        composable(Routes.GROUPS) {
-            GroupsRoute(navController)
+        composable<GroupListRoute> {
+            val viewModel: GroupListViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            GroupsScreen(uiState = uiState, onGroupClick = { id, name ->
+                navController.navigate(GroupDetailsRoute(id, name))
+            })
         }
-        dialog(Routes.ADD_GROUP) {
-            AddGroupRoute(navController)
+        dialog<AddGroupRoute> {
+            val viewModel: AddGroupViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            AddGroupDialog(
+                uiState = uiState,
+                onDismiss = { navController.popBackStack() },
+                onConfirm = {
+                    viewModel.addGroup()
+                    navController.popBackStack()
+                },
+                onNameChange = { viewModel.onNameChange(it) }
+            )
         }
-        composable(Routes.GROUP_DETAILS_ROUTE) {
-            GroupDetailsRoute()
+        composable<GroupDetailsRoute> {
+            val viewModel: GroupDetailsViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            GroupDetailsScreen(uiState = uiState)
         }
     }
 }
 
 @Composable
-private fun ConfigureFabButton(currentRoute: String?, navHostController: NavHostController) {
-    when (currentRoute) {
-        Routes.GROUPS -> {
+private fun ConfigureFabButton(navController: NavController) {
+    val backStackEntry = navController.currentBackStackEntryAsState().value
+    val destination = backStackEntry?.destination
+
+    when {
+        destination?.hasRoute<GroupListRoute>() == true -> {
             FabButton(
                 onClick = {
-                    navHostController.navigate(Routes.ADD_GROUP)
+                    navController.navigate(AddGroupRoute)
                 }
             )
         }
@@ -95,12 +123,17 @@ private fun ConfigureFabButton(currentRoute: String?, navHostController: NavHost
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun ConfigureTopBar(currentRoute: String?, navHostController: NavHostController) {
+private fun ConfigureTopBar(navController: NavController) {
+    val backStackEntry = navController.currentBackStackEntryAsState().value
+    val destination = backStackEntry?.destination
+
     when {
-        currentRoute == Routes.GROUPS -> TopApplicationBar(stringResource(R.string.groups_top_bar_title))
-        currentRoute?.startsWith(Routes.GROUP_DETAILS) == true -> TopApplicationBar(
-            title = stringResource(
-                R.string.group_details_top_bar_title
-            ), onIconButtonClick = { navHostController.popBackStack() })
+        destination?.hasRoute<GroupListRoute>() == true -> TopApplicationBar(stringResource(R.string.groups_top_bar_title))
+        destination?.hasRoute<GroupDetailsRoute>() == true -> {
+            val groupDetailsRoute = backStackEntry.toRoute<GroupDetailsRoute>()
+            TopApplicationBar(
+                title = groupDetailsRoute.name,
+                onIconButtonClick = { navController.popBackStack() })
+        }
     }
 }
