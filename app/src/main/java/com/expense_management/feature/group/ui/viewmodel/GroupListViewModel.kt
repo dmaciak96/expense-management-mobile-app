@@ -1,4 +1,4 @@
-package com.expense_management.feature.group.ui
+package com.expense_management.feature.group.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -45,7 +45,7 @@ class GroupListViewModel @Inject constructor(
 
                     is OperationResult.Error -> {
                         _uiState.value = GroupListUiState(
-                            errorMessageRes = R.string.get_all_groups_error
+                            errorMessageRes = R.string.general_error
                         )
                     }
                 }

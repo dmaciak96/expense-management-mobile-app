@@ -1,7 +1,7 @@
 package com.expense_management.feature.group.model
 
-data class GroupListUiState(
-    val groups: List<GroupUiModel> = emptyList(),
+data class GroupDetailsUiState(
+    val group: GroupUiModel? = null,
     val isLoading: Boolean = false,
     val errorMessageRes: Int? = null
 )

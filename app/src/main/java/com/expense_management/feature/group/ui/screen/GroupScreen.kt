@@ -1,13 +1,11 @@
-package com.expense_management.feature.group.ui
+package com.expense_management.feature.group.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,11 +20,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.expense_management.R
 import com.expense_management.feature.group.model.GroupListUiState
-import com.expense_management.feature.group.model.GroupUiState
+import com.expense_management.feature.group.model.GroupUiModel
 
 @Composable
 fun GroupsScreen(
     uiState: GroupListUiState,
+    onGroupClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -63,7 +62,7 @@ fun GroupsScreen(
                         items = uiState.groups,
                         key = { it.id }
                     ) { group ->
-                        GroupItem(group = group)
+                        GroupItem(group = group, onClick = { onGroupClick(group.id) })
                     }
                 }
             }
@@ -73,11 +72,13 @@ fun GroupsScreen(
 
 @Composable
 fun GroupItem(
-    group: GroupUiState,
+    group: GroupUiModel,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -87,7 +88,7 @@ fun GroupItem(
                 style = MaterialTheme.typography.titleMedium
             )
 
-            // TODO: Add balance calculation and group member count
+            // TODO: Add balance calculation
         }
     }
 }

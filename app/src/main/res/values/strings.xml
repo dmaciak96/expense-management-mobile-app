@@ -1,5 +1,16 @@
 <resources>
     <string name="app_name">Expense management</string>
-    <string name="get_all_groups_error">Wystąpił błąd</string>
+    <string name="general_error">Wystąpił błąd</string>
     <string name="empty_groups">Brak grup</string>
+    <string name="fab_button_desc">Floating action button</string>
+    <string name="groups_top_bar_title">Grupy</string>
+    <string name="group_details_top_bar_title">Szczegóły grupy</string>
+    <string name="back_button_desc">Wstecz</string>
+    <string name="ok_label">Ok</string>
+    <string name="cancel_label">Anuluj</string>
+    <string name="group_name_label">Nazwa grupy</string>
+    <string name="add_group_title">Dodaj grupę</string>
+    <string name="length_error_message">Maksymalnie 64 znaki</string>
+    <string name="is_blank_error_message">Nazwa nie może być pusta</string>
+    <string name="group_not_found">"Nie znaleziono grupy"</string>
 </resources>
