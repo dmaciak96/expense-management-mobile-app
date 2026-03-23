@@ -8,9 +8,14 @@
     <string name="back_button_desc">Wstecz</string>
     <string name="ok_label">Ok</string>
     <string name="cancel_label">Anuluj</string>
+    <string name="yes_label">Tak</string>
+    <string name="no_label">Nie</string>
     <string name="group_name_label">Nazwa grupy</string>
     <string name="add_group_title">Dodaj grupę</string>
+    <string name="delete_group_title">Usuń grupę</string>
+    <string name="confirm_text">Czy na pewno chcesz usunąć grupę `%s`?</string>
     <string name="length_error_message">Maksymalnie 64 znaki</string>
     <string name="is_blank_error_message">Nazwa nie może być pusta</string>
     <string name="group_not_found">"Nie znaleziono grupy"</string>
+    <string name="delete">Usuń</string>
 </resources>

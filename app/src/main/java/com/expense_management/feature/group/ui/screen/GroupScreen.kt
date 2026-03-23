@@ -19,6 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.expense_management.R
+import com.expense_management.core.component.SwipeBackgroundContent
+import com.expense_management.core.component.SwipeDirectionContent
+import com.expense_management.core.component.SwipeableListItem
 import com.expense_management.feature.group.model.GroupListUiState
 import com.expense_management.feature.group.model.GroupUiModel
 import kotlinx.serialization.Serializable
@@ -29,7 +32,8 @@ object GroupListRoute
 @Composable
 fun GroupsScreen(
     uiState: GroupListUiState,
-    onGroupClick: (Int, String) -> Unit,
+    onClick: (Int, String) -> Unit,
+    onSwipe: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -66,7 +70,11 @@ fun GroupsScreen(
                         items = uiState.groups,
                         key = { it.id }
                     ) { group ->
-                        GroupItem(group = group, onClick = { onGroupClick(group.id, group.name) })
+                        GroupItem(
+                            group = group,
+                            onClick = { onClick(group.id, group.name) },
+                            onSwipe = { onSwipe(group.id) },
+                        )
                     }
                 }
             }
@@ -78,21 +86,45 @@ fun GroupsScreen(
 fun GroupItem(
     group: GroupUiModel,
     onClick: () -> Unit,
+    onSwipe: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        onClick = onClick
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = group.name,
-                style = MaterialTheme.typography.titleMedium
+    SwipeableListItem(
+        backgroundContent = SwipeBackgroundContent(
+            startToEndContent = SwipeDirectionContent(
+                backgroundColor = MaterialTheme.colorScheme.error,
+                iconId = R.drawable.ic_delete,
+                iconContentDescriptionId = R.string.delete
+            ),
+            endToStartContent = SwipeDirectionContent(
+                backgroundColor = MaterialTheme.colorScheme.error,
+                iconId = R.drawable.ic_delete,
+                iconContentDescriptionId = R.string.delete
+            ),
+            settledContent = SwipeDirectionContent(
+                iconId = R.drawable.ic_delete,
+                iconContentDescriptionId = R.string.delete
             )
+        ),
+        onEndToStart = onSwipe,
+        onStartToEnd = onSwipe,
+        content = {
+            Card(
+                modifier = modifier.fillMaxWidth(),
+                onClick = onClick
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = group.name,
+                        style = MaterialTheme.typography.titleMedium
+                    )
 
-            // TODO: Add balance calculation
-        }
-    }
+                    // TODO: Add balance calculation
+                }
+            }
+        },
+        modifier = modifier
+    )
 }

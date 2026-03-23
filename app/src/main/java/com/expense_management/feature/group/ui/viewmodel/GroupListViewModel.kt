@@ -3,7 +3,9 @@ package com.expense_management.feature.group.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.expense_management.R
-import com.expense_management.core.common.OperationResult
+import com.expense_management.core.common.OperationResult.Error
+import com.expense_management.core.common.OperationResult.Loading
+import com.expense_management.core.common.OperationResult.Success
 import com.expense_management.domain.usecase.group.GetAllGroupsUseCase
 import com.expense_management.feature.group.mapper.GroupUiMapper
 import com.expense_management.feature.group.model.GroupListUiState
@@ -31,19 +33,19 @@ class GroupListViewModel @Inject constructor(
         getGroupsUseCase()
             .onEach { result ->
                 when (result) {
-                    is OperationResult.Success -> {
+                    is Success -> {
                         _uiState.value = GroupListUiState(
                             groups = groupUiMapper.toUiStates(result.data)
                         )
                     }
 
-                    is OperationResult.Loading -> {
+                    is Loading -> {
                         _uiState.value = _uiState.value.copy(
                             isLoading = true
                         )
                     }
 
-                    is OperationResult.Error -> {
+                    is Error -> {
                         _uiState.value = GroupListUiState(
                             errorMessageRes = R.string.general_error
                         )

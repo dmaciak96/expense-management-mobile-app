@@ -29,11 +29,14 @@ import com.expense_management.core.component.FabButton
 import com.expense_management.core.component.TopApplicationBar
 import com.expense_management.feature.group.ui.screen.AddGroupDialog
 import com.expense_management.feature.group.ui.screen.AddGroupRoute
+import com.expense_management.feature.group.ui.screen.DeleteGroupDialog
+import com.expense_management.feature.group.ui.screen.DeleteGroupRoute
 import com.expense_management.feature.group.ui.screen.GroupDetailsRoute
 import com.expense_management.feature.group.ui.screen.GroupDetailsScreen
 import com.expense_management.feature.group.ui.screen.GroupListRoute
 import com.expense_management.feature.group.ui.screen.GroupsScreen
 import com.expense_management.feature.group.ui.viewmodel.AddGroupViewModel
+import com.expense_management.feature.group.ui.viewmodel.DeleteGroupViewModel
 import com.expense_management.feature.group.ui.viewmodel.GroupDetailsViewModel
 import com.expense_management.feature.group.ui.viewmodel.GroupListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -80,9 +83,15 @@ fun AppNavHost(
         composable<GroupListRoute> {
             val viewModel: GroupListViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-            GroupsScreen(uiState = uiState, onGroupClick = { id, name ->
-                navController.navigate(GroupDetailsRoute(id, name))
-            })
+            GroupsScreen(
+                uiState = uiState,
+                onClick = { id, name ->
+                    navController.navigate(GroupDetailsRoute(id, name))
+                },
+                onSwipe = { id ->
+                    navController.navigate(DeleteGroupRoute(id))
+                }
+            )
         }
         dialog<AddGroupRoute> {
             val viewModel: AddGroupViewModel = hiltViewModel()
@@ -95,6 +104,18 @@ fun AppNavHost(
                     navController.popBackStack()
                 },
                 onNameChange = { viewModel.onNameChange(it) }
+            )
+        }
+        dialog<DeleteGroupRoute> {
+            val viewModel: DeleteGroupViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            DeleteGroupDialog(
+                uiState = uiState,
+                onDismiss = { navController.popBackStack() },
+                onConfirm = {
+                    viewModel.deleteGroup()
+                    navController.popBackStack()
+                }
             )
         }
         composable<GroupDetailsRoute> {
