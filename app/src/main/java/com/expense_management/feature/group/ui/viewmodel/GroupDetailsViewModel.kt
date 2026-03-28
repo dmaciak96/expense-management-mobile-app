@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.expense_management.R
 import com.expense_management.core.common.OperationResult
-import com.expense_management.domain.usecase.group.GetGroupByIdUseCase
+import com.expense_management.domain.usecase.group.GetGroupByIdentityUseCase
 import com.expense_management.feature.group.mapper.GroupUiMapper
 import com.expense_management.feature.group.model.GroupDetailsUiState
 import com.expense_management.feature.group.ui.screen.GroupDetailsRoute
@@ -16,14 +16,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @HiltViewModel
 class GroupDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getGroupByIdUseCase: GetGroupByIdUseCase,
+    private val getGroupByIdentityUseCase: GetGroupByIdentityUseCase,
     private val groupUiMapper: GroupUiMapper,
 ) : ViewModel() {
-    private val groupId: Int = savedStateHandle.toRoute<GroupDetailsRoute>().id
+    private val groupIdentity: UUID =
+        UUID.fromString(savedStateHandle.toRoute<GroupDetailsRoute>().identity)
     private val _uiState = MutableStateFlow(GroupDetailsUiState(isLoading = true))
     val uiState: StateFlow<GroupDetailsUiState> = _uiState.asStateFlow()
 
@@ -33,7 +35,7 @@ class GroupDetailsViewModel @Inject constructor(
 
     private fun observeGroup() {
         viewModelScope.launch {
-            getGroupByIdUseCase(groupId)
+            getGroupByIdentityUseCase(groupIdentity)
                 .collect { result ->
                     when (result) {
                         is OperationResult.Success -> {

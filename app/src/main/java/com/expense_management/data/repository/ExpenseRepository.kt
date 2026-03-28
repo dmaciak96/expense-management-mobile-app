@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import java.util.UUID
 
 class ExpenseRepository @Inject constructor(
     private val expenseDao: ExpenseDao
@@ -65,17 +66,17 @@ class ExpenseRepository @Inject constructor(
                 emit(Error(it))
             }
 
-    fun getById(id: Int): Flow<OperationResult<ExpenseEntity?>> =
-        expenseDao.getById(id)
+    fun getByIdentity(identity: UUID): Flow<OperationResult<ExpenseEntity?>> =
+        expenseDao.getByIdentity(identity.toString())
             .map<ExpenseEntity?, OperationResult<ExpenseEntity?>> {
                 Success(it)
             }
             .onStart {
-                Log.i(TAG, "Getting expense by id $id")
+                Log.i(TAG, "Getting expense by identity $identity")
                 emit(Loading)
             }
             .catch {
-                Log.e(TAG, "Failed to get expense by id $id: ${it.message}")
+                Log.e(TAG, "Failed to get expense by identity $identity: ${it.message}")
                 emit(Error(it))
             }
 

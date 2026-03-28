@@ -8,15 +8,16 @@ import com.expense_management.data.repository.GroupRepository
 import com.expense_management.domain.mapper.GroupMapper
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.map
+import java.util.UUID
 
-class GetGroupByIdUseCase @Inject constructor(private val repository: GroupRepository) {
-    operator fun invoke(id: Int) =
-        repository.getById(id)
+class GetGroupByIdentityUseCase @Inject constructor(private val repository: GroupRepository) {
+    operator fun invoke(identity: UUID) =
+        repository.getByIdentity(identity)
             .map { result ->
                 when (result) {
                     is Success -> {
                         if (result.data == null) {
-                            return@map Error(ElementNotFoundException("Group not found with id:$id"))
+                            return@map Error(ElementNotFoundException("Group not found with identity:$identity"))
                         }
                         return@map Success(GroupMapper.toDomain(result.data))
                     }

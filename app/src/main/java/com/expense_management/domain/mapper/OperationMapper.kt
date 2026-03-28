@@ -3,10 +3,11 @@ package com.expense_management.domain.mapper
 import com.expense_management.data.model.OperationEntity
 import com.expense_management.domain.model.Operation
 import com.expense_management.domain.model.OperationType
-import com.expense_management.domain.model.Payload
-import com.expense_management.domain.model.Signature
 import com.expense_management.domain.model.SignedPayload
+import com.expense_management.domain.model.binary.Payload
+import com.expense_management.domain.model.binary.Signature
 import java.time.Instant
+import java.util.UUID
 
 object OperationMapper {
     fun toEntity(operation: Operation) =
@@ -18,7 +19,8 @@ object OperationMapper {
             lamportClock = operation.lamportClock,
             type = operation.type.name,
             payload = operation.signedPayload.payload.toByteArray(),
-            signature = operation.signedPayload.signature.toByteArray()
+            signature = operation.signedPayload.signature.toByteArray(),
+            identity = operation.identity.toString()
         )
 
     fun toDomain(operationEntity: OperationEntity) =
@@ -32,7 +34,8 @@ object OperationMapper {
             signedPayload = SignedPayload(
                 payload = Payload.from(operationEntity.payload),
                 signature = Signature.from(operationEntity.signature)
-            )
+            ),
+            identity = UUID.fromString(operationEntity.identity)
         )
 
     fun toDomainList(operationEntities: List<OperationEntity>) =

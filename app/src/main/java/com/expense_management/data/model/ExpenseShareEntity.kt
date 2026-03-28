@@ -9,6 +9,8 @@ data class ExpenseShareEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
+    val identity: String,
+
     @ColumnInfo(name = "expense_id")
     val expenseId: Int,
 

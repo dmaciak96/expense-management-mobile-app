@@ -18,7 +18,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GroupDetailsRoute(
-    val id: Int,
+    val identity: String,
     val name: String
 )
 

@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import java.util.UUID
 
 class GroupMemberRepository @Inject constructor(
     private val groupMemberDao: GroupMemberDao
@@ -92,17 +93,17 @@ class GroupMemberRepository @Inject constructor(
                 emit(Error(it))
             }
 
-    fun getById(id: Int): Flow<OperationResult<GroupMemberEntity?>> =
-        groupMemberDao.getById(id)
+    fun getByIdentity(identity: UUID): Flow<OperationResult<GroupMemberEntity?>> =
+        groupMemberDao.getByIdentity(identity.toString())
             .map<GroupMemberEntity?, OperationResult<GroupMemberEntity?>> {
                 Success(it)
             }
             .onStart {
-                Log.i(TAG, "Getting group member by id $id from db")
+                Log.i(TAG, "Getting group member by identity $identity from db")
                 emit(Loading)
             }
             .catch {
-                Log.e(TAG, "Failed to get group member by id $id: ${it.message}")
+                Log.e(TAG, "Failed to get group member by identity $identity: ${it.message}")
                 emit(Error(it))
             }
 

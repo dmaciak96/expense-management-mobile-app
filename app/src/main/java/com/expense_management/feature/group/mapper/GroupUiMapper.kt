@@ -14,7 +14,8 @@ class GroupUiMapper @Inject constructor(
     fun toUiState(group: Group) = GroupUiModel(
         id = group.id,
         name = group.name,
-        createdAt = group.createdAt.toLocalDateTime(zoneProvider.zoneId())
+        createdAt = group.createdAt.toLocalDateTime(zoneProvider.zoneId()),
+        identity = group.identity
     )
 
     fun toUiStates(groups: List<Group>) = groups.map { toUiState(it) }
@@ -22,6 +23,7 @@ class GroupUiMapper @Inject constructor(
     fun toDomain(groupUiModel: GroupUiModel) = Group(
         id = groupUiModel.id,
         name = groupUiModel.name,
-        createdAt = groupUiModel.createdAt.toInstant(zoneProvider.zoneId())
+        createdAt = groupUiModel.createdAt.toInstant(zoneProvider.zoneId()),
+        identity = groupUiModel.identity
     )
 }

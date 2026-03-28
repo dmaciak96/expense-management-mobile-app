@@ -6,6 +6,7 @@ import com.expense_management.domain.model.CurrencyCode
 import com.expense_management.domain.model.Expense
 import com.expense_management.domain.model.MonetaryAmount
 import java.time.Instant
+import java.util.UUID
 
 object ExpenseMapper {
     fun toEntity(expense: Expense) = ExpenseEntity(
@@ -15,7 +16,8 @@ object ExpenseMapper {
         createdAt = expense.createdAt.toEpochMilli(),
         name = expense.name,
         minorUnits = expense.amount.minorUnits,
-        currency = expense.amount.currency.name
+        currency = expense.amount.currency.name,
+        identity = expense.identity.toString()
     )
 
     fun toDomain(expenseEntity: ExpenseEntity) = Expense(
@@ -27,7 +29,8 @@ object ExpenseMapper {
         amount = MonetaryAmount(
             expenseEntity.minorUnits,
             CurrencyCode.valueOf(expenseEntity.currency)
-        )
+        ),
+        identity = UUID.fromString(expenseEntity.identity)
     )
 
     fun toDomainList(expenseEntities: List<ExpenseEntity>) =

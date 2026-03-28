@@ -85,11 +85,11 @@ fun AppNavHost(
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             GroupsScreen(
                 uiState = uiState,
-                onClick = { id, name ->
-                    navController.navigate(GroupDetailsRoute(id, name))
+                onClick = { identity, name ->
+                    navController.navigate(GroupDetailsRoute(identity, name))
                 },
-                onSwipe = { id ->
-                    navController.navigate(DeleteGroupRoute(id))
+                onSwipe = { identity ->
+                    navController.navigate(DeleteGroupRoute(identity))
                 }
             )
         }

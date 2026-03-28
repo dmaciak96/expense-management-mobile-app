@@ -32,8 +32,8 @@ object GroupListRoute
 @Composable
 fun GroupsScreen(
     uiState: GroupListUiState,
-    onClick: (Int, String) -> Unit,
-    onSwipe: (Int) -> Unit,
+    onClick: (String, String) -> Unit,
+    onSwipe: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -72,8 +72,8 @@ fun GroupsScreen(
                     ) { group ->
                         GroupItem(
                             group = group,
-                            onClick = { onClick(group.id, group.name) },
-                            onSwipe = { onSwipe(group.id) },
+                            onClick = { onClick(group.identity.toString(), group.name) },
+                            onSwipe = { onSwipe(group.identity.toString()) },
                         )
                     }
                 }

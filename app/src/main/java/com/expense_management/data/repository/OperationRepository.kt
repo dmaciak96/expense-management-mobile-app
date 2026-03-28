@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import java.util.UUID
 
 class OperationRepository @Inject constructor(
     private val operationDao: OperationDao
@@ -48,15 +49,15 @@ class OperationRepository @Inject constructor(
                 emit(Error(it))
             }
 
-    fun getById(id: Int): Flow<OperationResult<OperationEntity?>> =
-        operationDao.getById(id)
+    fun getByIdentity(identity: UUID): Flow<OperationResult<OperationEntity?>> =
+        operationDao.getByIdentity(identity.toString())
             .map<OperationEntity?, OperationResult<OperationEntity?>> { Success(it) }
             .onStart {
-                Log.i(TAG, "Getting operation by id $id")
+                Log.i(TAG, "Getting operation by identity $identity")
                 emit(Loading)
             }
             .catch {
-                Log.e(TAG, "Failed to get operation by id $id: ${it.message}")
+                Log.e(TAG, "Failed to get operation by identity $identity: ${it.message}")
                 emit(Error(it))
             }
 

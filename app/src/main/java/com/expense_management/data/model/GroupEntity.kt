@@ -9,6 +9,8 @@ data class GroupEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
+    val identity: String,
+
     @ColumnInfo(name = "created_at")
     val createdAt: Long,
 

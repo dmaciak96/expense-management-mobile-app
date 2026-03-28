@@ -6,18 +6,21 @@ import com.expense_management.data.model.GroupMemberEntity
 import com.expense_management.data.model.OperationEntity
 import com.expense_management.domain.model.Group
 import java.time.Instant
+import java.util.UUID
 
 object GroupMapper {
     fun toEntity(group: Group) = GroupEntity(
         id = group.id,
         createdAt = group.createdAt.toEpochMilli(),
-        name = group.name
+        name = group.name,
+        identity = group.identity.toString()
     )
 
     fun toDomain(groupEntity: GroupEntity) = Group(
         id = groupEntity.id,
         createdAt = Instant.ofEpochMilli(groupEntity.createdAt),
-        name = groupEntity.name
+        name = groupEntity.name,
+        identity = UUID.fromString(groupEntity.identity)
     )
 
     fun toDomainList(groupEntities: List<GroupEntity>) =

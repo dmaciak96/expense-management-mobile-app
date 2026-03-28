@@ -10,7 +10,7 @@ import com.expense_management.core.common.OperationResult.Error
 import com.expense_management.core.common.OperationResult.Loading
 import com.expense_management.core.common.OperationResult.Success
 import com.expense_management.domain.usecase.group.DeleteGroupUseCase
-import com.expense_management.domain.usecase.group.GetGroupByIdUseCase
+import com.expense_management.domain.usecase.group.GetGroupByIdentityUseCase
 import com.expense_management.feature.group.mapper.GroupUiMapper
 import com.expense_management.feature.group.model.DeleteGroupUiState
 import com.expense_management.feature.group.ui.screen.DeleteGroupRoute
@@ -21,15 +21,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @HiltViewModel
 class DeleteGroupViewModel @Inject constructor(
     private val deleteGroupUseCase: DeleteGroupUseCase,
-    private val getGroupByIdUseCase: GetGroupByIdUseCase,
+    private val getGroupByIdentityUseCase: GetGroupByIdentityUseCase,
     private val groupUiMapper: GroupUiMapper,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val groupId = savedStateHandle.toRoute<DeleteGroupRoute>().id
+    private val groupIdentity =
+        UUID.fromString(savedStateHandle.toRoute<DeleteGroupRoute>().identity)
     private val _uiState = MutableStateFlow(DeleteGroupUiState())
     val uiState: StateFlow<DeleteGroupUiState> = _uiState.asStateFlow()
 
@@ -39,7 +41,7 @@ class DeleteGroupViewModel @Inject constructor(
 
     private fun observeGroup() {
         viewModelScope.launch {
-            getGroupByIdUseCase(groupId)
+            getGroupByIdentityUseCase(groupIdentity)
                 .collect { result ->
                     when (result) {
                         is Success -> {

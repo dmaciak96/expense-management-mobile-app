@@ -30,10 +30,10 @@ interface ExpenseShareDao {
     @Query(
         """
             SELECT * FROM `expense_shares` AS e
-            WHERE e.id = :id
+            WHERE e.identity = :identity
         """
     )
-    fun getById(id: Int): Flow<ExpenseShareEntity?>
+    fun getByIdentity(identity: String): Flow<ExpenseShareEntity?>
 
     @Query(
         """

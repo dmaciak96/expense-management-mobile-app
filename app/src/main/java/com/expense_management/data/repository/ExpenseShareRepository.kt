@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import java.util.UUID
 
 class ExpenseShareRepository @Inject constructor(
     private val expenseShareDao: ExpenseShareDao
@@ -70,17 +71,17 @@ class ExpenseShareRepository @Inject constructor(
                 emit(Error(it))
             }
 
-    fun getById(id: Int): Flow<OperationResult<ExpenseShareEntity?>> =
-        expenseShareDao.getById(id)
+    fun getByIdentity(identity: UUID): Flow<OperationResult<ExpenseShareEntity?>> =
+        expenseShareDao.getByIdentity(identity.toString())
             .map<ExpenseShareEntity?, OperationResult<ExpenseShareEntity?>> {
                 Success(it)
             }
             .onStart {
-                Log.i(TAG, "Getting expense share by id $id")
+                Log.i(TAG, "Getting expense share by identity $identity")
                 emit(Loading)
             }
             .catch {
-                Log.e(TAG, "Failed to get expense share by id $id: ${it.message}")
+                Log.e(TAG, "Failed to get expense share by identity $identity: ${it.message}")
                 emit(Error(it))
             }
 

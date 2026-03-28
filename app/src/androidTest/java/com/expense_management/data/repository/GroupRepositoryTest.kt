@@ -18,6 +18,7 @@ import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
 @RunWith(AndroidJUnit4::class)
@@ -36,7 +37,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         val expected = GroupEntity(
             id = 1,
             createdAt = TEST_GROUP.createdAt,
-            name = TEST_GROUP.name
+            name = TEST_GROUP.name,
+            identity = TEST_GROUP.identity
         )
 
         assertThat(
@@ -44,13 +46,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
             instanceOf(OperationResult.Success::class.java)
         )
 
-        val result = dao.getById(1).firstOrNull()
-
-        assertThat(
-            result, equalTo(
-                expected
-            )
-        )
+        val result = dao.getByIdentity(GROUP_IDENTITY).firstOrNull()
+        assertThat(result, equalTo(expected))
     }
 
     @Test
@@ -58,7 +55,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         val toRemove = GroupEntity(
             id = 1,
             createdAt = TEST_GROUP.createdAt,
-            name = TEST_GROUP.name
+            name = TEST_GROUP.name,
+            identity = TEST_GROUP.identity
         )
 
         dao.insert(TEST_GROUP)
@@ -77,18 +75,18 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         val toUpdate = GroupEntity(
             id = 1,
             createdAt = TEST_GROUP.createdAt,
-            name = expectedName
+            name = expectedName,
+            identity = TEST_GROUP.identity
         )
 
         dao.insert(TEST_GROUP)
 
         assertThat(
-            repository.update(
-                toUpdate
-            ), instanceOf(OperationResult.Success::class.java)
+            repository.update(toUpdate),
+            instanceOf(OperationResult.Success::class.java)
         )
 
-        val result = dao.getById(1).firstOrNull()
+        val result = dao.getByIdentity(GROUP_IDENTITY).firstOrNull()
         assertThat(result, equalTo(toUpdate))
     }
 
@@ -97,19 +95,22 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         dao.insert(
             TEST_GROUP.copy(
                 name = TEST_GROUP.name + "1",
-                createdAt = TEST_GROUP.createdAt + 1
+                createdAt = TEST_GROUP.createdAt + 1,
+                identity = GROUP_IDENTITY_1
             )
         )
         dao.insert(
             TEST_GROUP.copy(
                 name = TEST_GROUP.name + "2",
-                createdAt = TEST_GROUP.createdAt + 2
+                createdAt = TEST_GROUP.createdAt + 2,
+                identity = GROUP_IDENTITY_2
             )
         )
         dao.insert(
             TEST_GROUP.copy(
                 name = TEST_GROUP.name + "3",
-                createdAt = TEST_GROUP.createdAt + 3
+                createdAt = TEST_GROUP.createdAt + 3,
+                identity = GROUP_IDENTITY_3
             )
         )
 
@@ -117,17 +118,20 @@ class GroupRepositoryTest : DatabaseTestSuite() {
             GroupEntity(
                 id = 1,
                 createdAt = TEST_GROUP.createdAt + 1,
-                name = TEST_GROUP.name + "1"
+                name = TEST_GROUP.name + "1",
+                identity = GROUP_IDENTITY_1
             ),
             GroupEntity(
                 id = 2,
                 createdAt = TEST_GROUP.createdAt + 2,
-                name = TEST_GROUP.name + "2"
+                name = TEST_GROUP.name + "2",
+                identity = GROUP_IDENTITY_2
             ),
             GroupEntity(
                 id = 3,
                 createdAt = TEST_GROUP.createdAt + 3,
-                name = TEST_GROUP.name + "3"
+                name = TEST_GROUP.name + "3",
+                identity = GROUP_IDENTITY_3
             )
         )
 
@@ -138,49 +142,55 @@ class GroupRepositoryTest : DatabaseTestSuite() {
     }
 
     @Test
-    fun shouldGetGroupById() = runTest(timeout = 1.seconds) {
+    fun shouldGetGroupByIdentity() = runTest(timeout = 1.seconds) {
         dao.insert(
             TEST_GROUP.copy(
                 name = TEST_GROUP.name + "1",
-                createdAt = TEST_GROUP.createdAt + 1
+                createdAt = TEST_GROUP.createdAt + 1,
+                identity = GROUP_IDENTITY_1
             )
         )
         dao.insert(
             TEST_GROUP.copy(
                 name = TEST_GROUP.name + "2",
-                createdAt = TEST_GROUP.createdAt + 2
+                createdAt = TEST_GROUP.createdAt + 2,
+                identity = GROUP_IDENTITY_2
             )
         )
         dao.insert(
             TEST_GROUP.copy(
                 name = TEST_GROUP.name + "3",
-                createdAt = TEST_GROUP.createdAt + 3
+                createdAt = TEST_GROUP.createdAt + 3,
+                identity = GROUP_IDENTITY_3
             )
         )
 
         val expectedOne = GroupEntity(
             id = 1,
             createdAt = TEST_GROUP.createdAt + 1,
-            name = TEST_GROUP.name + "1"
+            name = TEST_GROUP.name + "1",
+            identity = GROUP_IDENTITY_1
         )
         val expectedTwo = GroupEntity(
             id = 2,
             createdAt = TEST_GROUP.createdAt + 2,
-            name = TEST_GROUP.name + "2"
+            name = TEST_GROUP.name + "2",
+            identity = GROUP_IDENTITY_2
         )
         val expectedThree = GroupEntity(
             id = 3,
             createdAt = TEST_GROUP.createdAt + 3,
-            name = TEST_GROUP.name + "3"
+            name = TEST_GROUP.name + "3",
+            identity = GROUP_IDENTITY_3
         )
 
-        val resultOne = repository.getById(1)
+        val resultOne = repository.getByIdentity(UUID.fromString(GROUP_IDENTITY_1))
             .first { it is OperationResult.Success } as OperationResult.Success<GroupEntity?>
-        val resultTwo = repository.getById(2)
+        val resultTwo = repository.getByIdentity(UUID.fromString(GROUP_IDENTITY_2))
             .first { it is OperationResult.Success } as OperationResult.Success<GroupEntity?>
-        val resultThree = repository.getById(3)
+        val resultThree = repository.getByIdentity(UUID.fromString(GROUP_IDENTITY_3))
             .first { it is OperationResult.Success } as OperationResult.Success<GroupEntity?>
-        val emptyResult = repository.getById(123)
+        val emptyResult = repository.getByIdentity(UUID.fromString(NOT_EXISTING_GROUP_IDENTITY))
             .first { it is OperationResult.Success } as OperationResult.Success<GroupEntity?>
 
         assertThat(resultOne.data, equalTo(expectedOne))
@@ -195,40 +205,46 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         val group1 = GroupEntity(
             id = 1,
             name = TEST_GROUP.name + "1",
-            createdAt = TEST_GROUP.createdAt + 1
+            createdAt = TEST_GROUP.createdAt + 1,
+            identity = GROUP_IDENTITY_1
         )
         val group2 = GroupEntity(
             id = 2,
             name = TEST_GROUP.name + "2",
-            createdAt = TEST_GROUP.createdAt + 2
+            createdAt = TEST_GROUP.createdAt + 2,
+            identity = GROUP_IDENTITY_2
         )
         val member1 = GroupMemberEntity(
             id = 1,
             groupId = 1,
             displayName = MEMBER_NAME + 1,
             publicKey = byteArrayOf(1, 2, 3, 4),
-            role = ROLE + 1
+            role = ROLE + 1,
+            identity = MEMBER_IDENTITY_1
         )
         val member2 = GroupMemberEntity(
             id = 2,
             groupId = 1,
             displayName = MEMBER_NAME + 11,
             publicKey = byteArrayOf(1, 2, 3, 4, 5),
-            role = ROLE + 11
+            role = ROLE + 11,
+            identity = MEMBER_IDENTITY_2
         )
         val member3 = GroupMemberEntity(
             id = 3,
             groupId = 2,
             displayName = MEMBER_NAME + 2,
             publicKey = byteArrayOf(1, 2, 3, 4, 5, 6),
-            role = ROLE + 2
+            role = ROLE + 2,
+            identity = MEMBER_IDENTITY_3
         )
         val member4 = GroupMemberEntity(
             id = 4,
             groupId = 2,
             displayName = MEMBER_NAME + 22,
             publicKey = byteArrayOf(1, 2, 3, 4, 5, 6, 7),
-            role = ROLE + 22
+            role = ROLE + 22,
+            identity = MEMBER_IDENTITY_4
         )
 
         dao.insert(group1.copy(id = 0))
@@ -253,12 +269,14 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         val group1 = GroupEntity(
             id = 1,
             name = TEST_GROUP.name + "1",
-            createdAt = TEST_GROUP.createdAt + 1
+            createdAt = TEST_GROUP.createdAt + 1,
+            identity = GROUP_IDENTITY_1
         )
         val group2 = GroupEntity(
             id = 2,
             name = TEST_GROUP.name + "2",
-            createdAt = TEST_GROUP.createdAt + 2
+            createdAt = TEST_GROUP.createdAt + 2,
+            identity = GROUP_IDENTITY_2
         )
 
         val expense1 = ExpenseEntity(
@@ -268,7 +286,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
             createdAt = CREATED_AT,
             name = EXPENSE_NAME + "1",
             minorUnits = MINOR_UNITS + 1,
-            currency = CURRENCY
+            currency = CURRENCY,
+            identity = EXPENSE_IDENTITY_1
         )
         val expense2 = ExpenseEntity(
             id = 2,
@@ -277,7 +296,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
             createdAt = CREATED_AT,
             name = EXPENSE_NAME + "2",
             minorUnits = MINOR_UNITS + 2,
-            currency = CURRENCY
+            currency = CURRENCY,
+            identity = EXPENSE_IDENTITY_2
         )
         val expense3 = ExpenseEntity(
             id = 3,
@@ -286,7 +306,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
             createdAt = CREATED_AT,
             name = EXPENSE_NAME + "3",
             minorUnits = MINOR_UNITS + 3,
-            currency = CURRENCY
+            currency = CURRENCY,
+            identity = EXPENSE_IDENTITY_3
         )
         val expense4 = ExpenseEntity(
             id = 4,
@@ -295,7 +316,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
             createdAt = CREATED_AT,
             name = EXPENSE_NAME + "4",
             minorUnits = MINOR_UNITS + 4,
-            currency = CURRENCY
+            currency = CURRENCY,
+            identity = EXPENSE_IDENTITY_4
         )
 
         dao.insert(group1.copy(id = 0))
@@ -320,53 +342,59 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         val group1 = GroupEntity(
             id = 1,
             name = TEST_GROUP.name + "1",
-            createdAt = TEST_GROUP.createdAt + 1
+            createdAt = TEST_GROUP.createdAt + 1,
+            identity = GROUP_IDENTITY_1
         )
         val group2 = GroupEntity(
             id = 2,
             name = TEST_GROUP.name + "2",
-            createdAt = TEST_GROUP.createdAt + 2
+            createdAt = TEST_GROUP.createdAt + 2,
+            identity = GROUP_IDENTITY_2
         )
 
         val operation1 = OperationEntity(
             id = 1,
             groupId = group1.id,
             operationAuthorId = OPERATION_AUTHOR_ID + 1,
-            CREATED_AT + 1,
+            createdAt = CREATED_AT + 1,
             lamportClock = LAMPORT_CLOCK + 1,
             type = OPERATION_TYPE,
             payload = byteArrayOf(1, 2, 3, 4),
-            signature = byteArrayOf(1, 2, 3, 4)
+            signature = byteArrayOf(1, 2, 3, 4),
+            identity = OPERATION_IDENTITY_1
         )
         val operation2 = OperationEntity(
             id = 2,
             groupId = group1.id,
             operationAuthorId = OPERATION_AUTHOR_ID + 2,
-            CREATED_AT + 2,
+            createdAt = CREATED_AT + 2,
             lamportClock = LAMPORT_CLOCK + 2,
             type = OPERATION_TYPE,
             payload = byteArrayOf(1, 2, 3, 4),
-            signature = byteArrayOf(1, 2, 3, 4)
+            signature = byteArrayOf(1, 2, 3, 4),
+            identity = OPERATION_IDENTITY_2
         )
         val operation3 = OperationEntity(
             id = 3,
             groupId = group2.id,
             operationAuthorId = OPERATION_AUTHOR_ID + 3,
-            CREATED_AT + 3,
+            createdAt = CREATED_AT + 3,
             lamportClock = LAMPORT_CLOCK + 3,
             type = OPERATION_TYPE,
             payload = byteArrayOf(1, 2, 3, 4),
-            signature = byteArrayOf(1, 2, 3, 4)
+            signature = byteArrayOf(1, 2, 3, 4),
+            identity = OPERATION_IDENTITY_3
         )
         val operation4 = OperationEntity(
             id = 4,
             groupId = group2.id,
             operationAuthorId = OPERATION_AUTHOR_ID + 4,
-            CREATED_AT + 4,
+            createdAt = CREATED_AT + 4,
             lamportClock = LAMPORT_CLOCK + 4,
             type = OPERATION_TYPE,
             payload = byteArrayOf(1, 2, 3, 4),
-            signature = byteArrayOf(1, 2, 3, 4)
+            signature = byteArrayOf(1, 2, 3, 4),
+            identity = OPERATION_IDENTITY_4
         )
 
         dao.insert(group1.copy(id = 0))
@@ -397,9 +425,32 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         private const val OPERATION_TYPE = "test_type"
         private const val LAMPORT_CLOCK = 1234L
         private const val OPERATION_AUTHOR_ID = 11
+
+        private const val GROUP_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c70"
+        private const val GROUP_IDENTITY_1 = "dfa4e836-190a-4292-a3fe-c516c1d99c71"
+        private const val GROUP_IDENTITY_2 = "dfa4e836-190a-4292-a3fe-c516c1d99c72"
+        private const val GROUP_IDENTITY_3 = "dfa4e836-190a-4292-a3fe-c516c1d99c73"
+        private const val NOT_EXISTING_GROUP_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c74"
+
+        private const val MEMBER_IDENTITY_1 = "dfa4e836-190a-4292-a3fe-c516c1d99c75"
+        private const val MEMBER_IDENTITY_2 = "dfa4e836-190a-4292-a3fe-c516c1d99c76"
+        private const val MEMBER_IDENTITY_3 = "dfa4e836-190a-4292-a3fe-c516c1d99c77"
+        private const val MEMBER_IDENTITY_4 = "dfa4e836-190a-4292-a3fe-c516c1d99c78"
+
+        private const val EXPENSE_IDENTITY_1 = "dfa4e836-190a-4292-a3fe-c516c1d99c79"
+        private const val EXPENSE_IDENTITY_2 = "dfa4e836-190a-4292-a3fe-c516c1d99c80"
+        private const val EXPENSE_IDENTITY_3 = "dfa4e836-190a-4292-a3fe-c516c1d99c81"
+        private const val EXPENSE_IDENTITY_4 = "dfa4e836-190a-4292-a3fe-c516c1d99c82"
+
+        private const val OPERATION_IDENTITY_1 = "dfa4e836-190a-4292-a3fe-c516c1d99c83"
+        private const val OPERATION_IDENTITY_2 = "dfa4e836-190a-4292-a3fe-c516c1d99c84"
+        private const val OPERATION_IDENTITY_3 = "dfa4e836-190a-4292-a3fe-c516c1d99c85"
+        private const val OPERATION_IDENTITY_4 = "dfa4e836-190a-4292-a3fe-c516c1d99c86"
+
         private val TEST_GROUP = GroupEntity(
             createdAt = CREATED_AT,
-            name = NAME
+            name = NAME,
+            identity = GROUP_IDENTITY
         )
     }
 }

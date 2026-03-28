@@ -39,4 +39,7 @@ object DatabaseHiltModule {
 
     @Provides
     fun provideOperationDao(appDb: AppDb) = appDb.operationDao()
+
+    @Provides
+    fun providesUserIdentityDao(appDb: AppDb) = appDb.userIdentityDao()
 }

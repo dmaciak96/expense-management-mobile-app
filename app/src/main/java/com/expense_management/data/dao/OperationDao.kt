@@ -1,10 +1,8 @@
 package com.expense_management.data.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
 import com.expense_management.data.model.OperationEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -23,11 +21,11 @@ interface OperationDao {
 
     @Query(
         """
-            SELECT * FROM `operations` AS o
-            WHERE o.id = :id
+            SELECT * FROM `operations` as o
+            WHERE o.identity = :identity
         """
     )
-    fun getById(id: Int): Flow<OperationEntity?>
+    fun getByIdentity(identity: String): Flow<OperationEntity?>
 
     @Query(
         """

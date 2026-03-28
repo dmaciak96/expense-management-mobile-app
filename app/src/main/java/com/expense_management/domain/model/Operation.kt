@@ -1,9 +1,13 @@
 package com.expense_management.domain.model
 
+import com.expense_management.domain.model.binary.Payload
+import com.expense_management.domain.model.binary.Signature
 import java.time.Instant
+import java.util.UUID
 
 data class Operation(
     val id: Int,
+    val identity: UUID,
     val groupId: Int,
     val operationAuthorId: Int,
 
@@ -21,18 +25,6 @@ data class SignedPayload(
     val payload: Payload,
     val signature: Signature
 )
-
-class Signature private constructor(bytes: ByteArray) : BinaryValue(bytes) {
-    companion object {
-        fun from(bytes: ByteArray) = Signature(bytes.copyOf())
-    }
-}
-
-class Payload private constructor(bytes: ByteArray) : BinaryValue(bytes) {
-    companion object {
-        fun from(bytes: ByteArray) = Payload(bytes.copyOf())
-    }
-}
 
 enum class OperationType {
     ADD_MEMBER,

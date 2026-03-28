@@ -32,11 +32,11 @@ interface GroupMemberDao {
 
     @Query(
         """
-            SELECT * FROM `group_members` AS g
-            WHERE g.id = :id
+            SELECT * FROM `group_members` as g
+            WHERE g.identity = :identity
         """
     )
-    fun getById(id: Int): Flow<GroupMemberEntity?>
+    fun getByIdentity(identity: String): Flow<GroupMemberEntity?>
 
     @Query(
         """

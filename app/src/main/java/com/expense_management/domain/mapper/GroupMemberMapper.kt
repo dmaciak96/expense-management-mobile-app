@@ -6,7 +6,8 @@ import com.expense_management.data.model.GroupMemberEntity
 import com.expense_management.data.model.OperationEntity
 import com.expense_management.domain.model.GroupMember
 import com.expense_management.domain.model.GroupRole
-import com.expense_management.domain.model.PublicKey
+import com.expense_management.domain.model.binary.PublicKey
+import java.util.UUID
 
 object GroupMemberMapper {
     fun toEntity(groupMember: GroupMember) =
@@ -15,7 +16,8 @@ object GroupMemberMapper {
             groupId = groupMember.groupId,
             displayName = groupMember.displayName,
             publicKey = groupMember.publicKey.toByteArray(),
-            role = groupMember.role.name
+            role = groupMember.role.name,
+            identity = groupMember.identity.toString()
         )
 
     fun toDomain(groupMemberEntity: GroupMemberEntity) =
@@ -24,7 +26,8 @@ object GroupMemberMapper {
             groupId = groupMemberEntity.groupId,
             displayName = groupMemberEntity.displayName,
             publicKey = PublicKey.from(groupMemberEntity.publicKey),
-            role = GroupRole.valueOf(groupMemberEntity.role)
+            role = GroupRole.valueOf(groupMemberEntity.role),
+            identity = UUID.fromString(groupMemberEntity.identity)
         )
 
     fun toDomainList(groupMemberEntities: List<GroupMemberEntity>) =

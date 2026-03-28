@@ -9,9 +9,10 @@ import androidx.compose.ui.res.stringResource
 import com.expense_management.R
 import com.expense_management.feature.group.model.DeleteGroupUiState
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Serializable
-data class DeleteGroupRoute(val id: Int)
+data class DeleteGroupRoute(val identity: String)
 
 @Composable
 fun DeleteGroupDialog(

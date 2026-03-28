@@ -1,17 +1,12 @@
 package com.expense_management.domain.model
 
 import com.expense_management.domain.model.binary.PublicKey
+import java.time.Instant
 import java.util.UUID
 
-data class GroupMember(
-    val id: Int,
+data class UserIdentity(
+    val createdAt: Instant,
     val identity: UUID,
-    val groupId: Int,
-    val displayName: String,
+    val name: String,
     val publicKey: PublicKey,
-    val role: GroupRole
 )
-
-enum class GroupRole {
-    Owner, Member
-}
