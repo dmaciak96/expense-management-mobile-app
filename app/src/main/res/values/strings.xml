@@ -18,4 +18,6 @@
     <string name="is_blank_error_message">Nazwa nie może być pusta</string>
     <string name="group_not_found">"Nie znaleziono grupy"</string>
     <string name="delete">Usuń</string>
+    <string name="create_identity">Podaj swoje imię</string>
+    <string name="username_label">Imię</string>
 </resources>

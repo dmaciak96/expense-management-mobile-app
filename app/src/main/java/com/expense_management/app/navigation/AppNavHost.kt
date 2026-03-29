@@ -1,7 +1,13 @@
 package com.expense_management.app.navigation
 
+import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -21,6 +27,13 @@ import com.expense_management.feature.group.viewmodel.AddGroupViewModel
 import com.expense_management.feature.group.viewmodel.DeleteGroupViewModel
 import com.expense_management.feature.group.viewmodel.GroupDetailsViewModel
 import com.expense_management.feature.group.viewmodel.GroupListViewModel
+import com.expense_management.feature.user_identity.ui.CreateUserIdentityDialog
+import com.expense_management.feature.user_identity.ui.CreateUserIdentityRoute
+import com.expense_management.feature.user_identity.viewmodel.CreateUserIdentityViewModel
+import kotlinx.serialization.Serializable
+
+@Serializable
+object StartupRoute
 
 @Composable
 fun AppNavHost(
@@ -29,9 +42,57 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = GroupListRoute,
+        startDestination = StartupRoute,
         modifier = modifier
     ) {
+        composable<StartupRoute> {
+            val viewModel: CreateUserIdentityViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            LaunchedEffect(Unit) {
+                viewModel.isMissingUserIdentity()
+            }
+
+            LaunchedEffect(uiState.isLoading, uiState.isMissing) {
+                if (!uiState.isLoading) {
+                    when {
+                        uiState.isMissing -> {
+                            navController.navigate(CreateUserIdentityRoute) {
+                                popUpTo<StartupRoute> { inclusive = true }
+                            }
+                        }
+
+                        else -> {
+                            navController.navigate(GroupListRoute)
+                        }
+                    }
+                }
+            }
+
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
+        dialog<CreateUserIdentityRoute> {
+            val viewModel: CreateUserIdentityViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val activity = LocalActivity.current
+
+            CreateUserIdentityDialog(
+                uiState = uiState,
+                onNameChange = { viewModel.onNameChange(it) },
+                onDismiss = { activity?.finish() },
+                onConfirm = {
+                    viewModel.createIdentity()
+                    navController.navigate(GroupListRoute)
+                }
+            )
+        }
         composable<GroupListRoute> {
             val viewModel: GroupListViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
