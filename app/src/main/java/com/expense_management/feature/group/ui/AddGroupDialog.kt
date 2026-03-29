@@ -1,4 +1,4 @@
-package com.expense_management.feature.group.ui.screen
+package com.expense_management.feature.group.ui
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.expense_management.R
-import com.expense_management.feature.group.model.AddGroupUiState
+import com.expense_management.feature.group.ui.state.AddGroupUiState
 import kotlinx.serialization.Serializable
 
 @Serializable

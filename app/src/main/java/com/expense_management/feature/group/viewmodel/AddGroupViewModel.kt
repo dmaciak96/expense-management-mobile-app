@@ -1,12 +1,12 @@
-package com.expense_management.feature.group.ui.viewmodel
+package com.expense_management.feature.group.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.expense_management.R
 import com.expense_management.domain.usecase.group.CreateGroupUseCase
 import com.expense_management.feature.group.mapper.GroupUiMapper
-import com.expense_management.feature.group.model.AddGroupUiState
-import com.expense_management.feature.group.model.GroupUiModel
+import com.expense_management.feature.group.ui.state.AddGroupUiState
+import com.expense_management.feature.group.ui.state.GroupUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

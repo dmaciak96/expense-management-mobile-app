@@ -4,7 +4,7 @@ import com.expense_management.core.time.ZoneProvider
 import com.expense_management.core.time.toInstant
 import com.expense_management.core.time.toLocalDateTime
 import com.expense_management.domain.model.Group
-import com.expense_management.feature.group.model.GroupUiModel
+import com.expense_management.feature.group.ui.state.GroupUiModel
 import jakarta.inject.Inject
 
 class GroupUiMapper @Inject constructor(

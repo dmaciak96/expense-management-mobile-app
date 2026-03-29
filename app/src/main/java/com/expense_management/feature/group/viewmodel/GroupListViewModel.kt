@@ -1,4 +1,4 @@
-package com.expense_management.feature.group.ui.viewmodel
+package com.expense_management.feature.group.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +8,7 @@ import com.expense_management.core.common.OperationResult.Loading
 import com.expense_management.core.common.OperationResult.Success
 import com.expense_management.domain.usecase.group.GetAllGroupsUseCase
 import com.expense_management.feature.group.mapper.GroupUiMapper
-import com.expense_management.feature.group.model.GroupListUiState
+import com.expense_management.feature.group.ui.state.GroupListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

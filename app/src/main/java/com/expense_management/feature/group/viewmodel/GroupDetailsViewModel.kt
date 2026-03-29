@@ -1,4 +1,4 @@
-package com.expense_management.feature.group.ui.viewmodel
+package com.expense_management.feature.group.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -8,8 +8,8 @@ import com.expense_management.R
 import com.expense_management.core.common.OperationResult
 import com.expense_management.domain.usecase.group.GetGroupByIdentityUseCase
 import com.expense_management.feature.group.mapper.GroupUiMapper
-import com.expense_management.feature.group.model.GroupDetailsUiState
-import com.expense_management.feature.group.ui.screen.GroupDetailsRoute
+import com.expense_management.feature.group.ui.state.GroupDetailsUiState
+import com.expense_management.feature.group.ui.GroupDetailsRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

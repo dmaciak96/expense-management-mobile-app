@@ -1,4 +1,4 @@
-package com.expense_management.feature.group.model
+package com.expense_management.feature.group.ui.state
 
 import java.util.UUID
 

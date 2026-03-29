@@ -1,4 +1,4 @@
-package com.expense_management.feature.group.ui.screen
+package com.expense_management.feature.group.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.expense_management.R
-import com.expense_management.feature.group.model.GroupDetailsUiState
+import com.expense_management.feature.group.ui.state.GroupDetailsUiState
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,4 +1,4 @@
-package com.expense_management.feature.group.ui.viewmodel
+package com.expense_management.feature.group.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -12,8 +12,8 @@ import com.expense_management.core.common.OperationResult.Success
 import com.expense_management.domain.usecase.group.DeleteGroupUseCase
 import com.expense_management.domain.usecase.group.GetGroupByIdentityUseCase
 import com.expense_management.feature.group.mapper.GroupUiMapper
-import com.expense_management.feature.group.model.DeleteGroupUiState
-import com.expense_management.feature.group.ui.screen.DeleteGroupRoute
+import com.expense_management.feature.group.ui.state.DeleteGroupUiState
+import com.expense_management.feature.group.ui.DeleteGroupRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,4 @@
-package com.expense_management.feature.group.ui.screen
+package com.expense_management.feature.group.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,8 +22,8 @@ import com.expense_management.R
 import com.expense_management.core.component.SwipeBackgroundContent
 import com.expense_management.core.component.SwipeDirectionContent
 import com.expense_management.core.component.SwipeableListItem
-import com.expense_management.feature.group.model.GroupListUiState
-import com.expense_management.feature.group.model.GroupUiModel
+import com.expense_management.feature.group.ui.state.GroupListUiState
+import com.expense_management.feature.group.ui.state.GroupUiModel
 import kotlinx.serialization.Serializable
 
 @Serializable
