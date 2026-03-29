@@ -11,11 +11,11 @@ data class ExpenseEntity(
 
     val identity: String,
 
-    @ColumnInfo(name = "group_id")
-    val groupId: Int,
+    @ColumnInfo(name = "group_identity")
+    val groupIdentity: String,
 
-    @ColumnInfo(name = "paid_by_member_id")
-    val paidByMemberId: Int,
+    @ColumnInfo(name = "paid_by_member_identity")
+    val paidByMemberIdentity: String,
 
     @ColumnInfo(name = "created_at")
     val createdAt: Long,

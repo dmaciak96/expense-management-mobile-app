@@ -104,7 +104,7 @@ class OperationRepositoryTest : DatabaseTestSuite() {
     }
 
     @Test
-    fun shouldGetOperationsByGroupId() = runTest(timeout = 1.seconds) {
+    fun shouldGetOperationsByGroupIdentity() = runTest(timeout = 1.seconds) {
         val groupDao = db.groupDao()
         groupDao.insert(TEST_GROUP)
         groupDao.insert(TEST_GROUP.copy(name = "group2", createdAt = CREATED_AT + 100, identity = GROUP_IDENTITY_2))
@@ -113,7 +113,7 @@ class OperationRepositoryTest : DatabaseTestSuite() {
         dao.insert(TEST_OPERATION.copy(groupId = 1, type = "type2", payload = byteArrayOf(2), signature = byteArrayOf(22), identity = OPERATION_IDENTITY_2))
         dao.insert(TEST_OPERATION.copy(groupId = 2, type = "type3", payload = byteArrayOf(3), signature = byteArrayOf(33), identity = OPERATION_IDENTITY_3))
 
-        val result = repository.getOperationsByGroupId(1)
+        val result = repository.getOperationsByGroupIdentity(1)
             .first { it is OperationResult.Success } as OperationResult.Success<List<OperationEntity>>
 
         assertThat(result.data.size, equalTo(2))
@@ -128,7 +128,7 @@ class OperationRepositoryTest : DatabaseTestSuite() {
     }
 
     @Test
-    fun shouldGetOperationsByGroupMemberId() = runTest(timeout = 1.seconds) {
+    fun shouldGetOperationsByGroupMemberIdentity() = runTest(timeout = 1.seconds) {
         val groupDao = db.groupDao()
         groupDao.insert(TEST_GROUP)
 
@@ -136,7 +136,7 @@ class OperationRepositoryTest : DatabaseTestSuite() {
         dao.insert(TEST_OPERATION.copy(operationAuthorId = 11, type = "type2", payload = byteArrayOf(2), signature = byteArrayOf(22), identity = OPERATION_IDENTITY_2))
         dao.insert(TEST_OPERATION.copy(operationAuthorId = 22, type = "type3", payload = byteArrayOf(3), signature = byteArrayOf(33), identity = OPERATION_IDENTITY_3))
 
-        val result = repository.getOperationsByGroupMemberId(11)
+        val result = repository.getOperationsByGroupMemberIdentity(11)
             .first { it is OperationResult.Success } as OperationResult.Success<List<OperationEntity>>
 
         assertThat(result.data.size, equalTo(2))

@@ -5,6 +5,7 @@ import com.expense_management.domain.model.CurrencyCode
 import com.expense_management.domain.model.Expense
 import com.expense_management.domain.model.ExpenseShare
 import com.expense_management.domain.model.MonetaryAmount
+import java.util.UUID
 
 class ComputeBalanceUseCase {
     operator fun invoke(
@@ -15,14 +16,14 @@ class ComputeBalanceUseCase {
         checkIfAllExpenseSharesPointingToExpense(expenses, expenseShares)
         val currency = getCurrency(expenses, expenseShares)
 
-        val netByMemberId = mutableMapOf<Int, Long>()
+        val netByMemberId = mutableMapOf<UUID, Long>()
         for (expense in expenses) {
-            netByMemberId.merge(expense.paidByMemberId, expense.amount.minorUnits, Long::plus)
+            netByMemberId.merge(expense.paidByMemberIdentity, expense.amount.minorUnits, Long::plus)
         }
 
         for (expenseShare in expenseShares) {
             netByMemberId.merge(
-                expenseShare.memberId,
+                expenseShare.memberIdentity,
                 -expenseShare.sharedAmount.minorUnits,
                 Long::plus
             )
@@ -56,8 +57,8 @@ class ComputeBalanceUseCase {
 
             result.add(
                 BalanceLine(
-                    fromMemberId = debtor.memberId,
-                    toMemberId = creditor.memberId,
+                    fromMemberIdentity = debtor.memberIdentity,
+                    toMemberIdentity = creditor.memberIdentity,
                     amount = MonetaryAmount(transferMinor, currency)
                 )
             )
@@ -79,8 +80,8 @@ class ComputeBalanceUseCase {
     }
 
     private fun checkIfExpensesAreFromSingleGroup(expenses: List<Expense>) {
-        val firstGroupId = expenses.firstOrNull()?.groupId ?: return
-        require(expenses.all { it.groupId == firstGroupId }) {
+        val firstGroupId = expenses.firstOrNull()?.groupIdentity ?: return
+        require(expenses.all { it.groupIdentity == firstGroupId }) {
             "Expected expenses from exactly one group, but found more than 1"
         }
     }
@@ -91,8 +92,8 @@ class ComputeBalanceUseCase {
     ) {
         if (expenses.isEmpty() && expenseShares.isEmpty()) return
 
-        val expenseIds = expenses.asSequence().map { it.id }.toHashSet()
-        require(expenseShares.all { it.expenseId in expenseIds }) {
+        val expenseIdentities = expenses.asSequence().map { it.identity }.toHashSet()
+        require(expenseShares.all { it.expenseIdentity in expenseIdentities }) {
             "Expected expenseShares to reference existing expenses"
         }
     }
@@ -114,7 +115,7 @@ class ComputeBalanceUseCase {
     }
 
     private data class ParticipantNet(
-        val memberId: Int,
+        val memberIdentity: UUID,
         var amount: Long
     )
 }

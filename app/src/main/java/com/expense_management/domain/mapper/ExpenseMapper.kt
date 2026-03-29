@@ -11,8 +11,8 @@ import java.util.UUID
 object ExpenseMapper {
     fun toEntity(expense: Expense) = ExpenseEntity(
         id = expense.id,
-        groupId = expense.groupId,
-        paidByMemberId = expense.paidByMemberId,
+        groupIdentity = expense.groupIdentity.toString(),
+        paidByMemberIdentity = expense.paidByMemberIdentity.toString(),
         createdAt = expense.createdAt.toEpochMilli(),
         name = expense.name,
         minorUnits = expense.amount.minorUnits,
@@ -22,8 +22,8 @@ object ExpenseMapper {
 
     fun toDomain(expenseEntity: ExpenseEntity) = Expense(
         id = expenseEntity.id,
-        groupId = expenseEntity.groupId,
-        paidByMemberId = expenseEntity.paidByMemberId,
+        groupIdentity = UUID.fromString(expenseEntity.groupIdentity),
+        paidByMemberIdentity = UUID.fromString(expenseEntity.paidByMemberIdentity),
         createdAt = Instant.ofEpochMilli(expenseEntity.createdAt),
         name = expenseEntity.name,
         amount = MonetaryAmount(

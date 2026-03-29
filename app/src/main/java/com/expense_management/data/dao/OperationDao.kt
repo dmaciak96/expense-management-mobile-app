@@ -30,16 +30,16 @@ interface OperationDao {
     @Query(
         """
             SELECT * FROM `operations` AS o
-            WHERE o.group_id = :groupId
+            WHERE o.group_identity = :groupIdentity
         """
     )
-    fun getOperationsByGroupId(groupId: Int): Flow<List<OperationEntity>>
+    fun getOperationsByGroupIdentity(groupIdentity: String): Flow<List<OperationEntity>>
 
     @Query(
         """
             SELECT * FROM `operations` AS o
-            WHERE o.operation_author_id = :groupMemberId
+            WHERE o.operation_author_identity = :groupMemberIdentity
         """
     )
-    fun getOperationsByGroupMemberId(groupMemberId: Int): Flow<List<OperationEntity>>
+    fun getOperationsByGroupMemberIdentity(groupMemberIdentity: String): Flow<List<OperationEntity>>
 }

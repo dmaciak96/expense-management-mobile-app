@@ -11,11 +11,11 @@ data class OperationEntity(
 
     val identity: String,
 
-    @ColumnInfo(name = "group_id")
-    val groupId: Int,
+    @ColumnInfo(name = "group_identity")
+    val groupIdentity: String,
 
-    @ColumnInfo(name = "operation_author_id")
-    val operationAuthorId: Int,
+    @ColumnInfo(name = "operation_author_identity")
+    val operationAuthorIdentity: String,
 
     @ColumnInfo(name = "created_at")
     val createdAt: Long,

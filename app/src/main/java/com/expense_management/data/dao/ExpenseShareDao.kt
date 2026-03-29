@@ -38,16 +38,16 @@ interface ExpenseShareDao {
     @Query(
         """
             SELECT * FROM `expense_shares` AS e
-            WHERE e.expense_id = :expenseId
+            WHERE e.expense_identity = :expenseIdentity
         """
     )
-    fun getExpenseSharesByExpenseId(expenseId: Int): Flow<List<ExpenseShareEntity>>
+    fun getExpenseSharesByExpenseIdentity(expenseIdentity: String): Flow<List<ExpenseShareEntity>>
 
     @Query(
         """
             SELECT * FROM `expense_shares` AS e
-            WHERE e.member_id = :groupMemberId
+            WHERE e.member_identity = :groupMemberIdentity
         """
     )
-    fun getExpenseSharesByGroupMemberId(groupMemberId: Int): Flow<List<ExpenseShareEntity>>
+    fun getExpenseSharesByGroupMemberIdentity(groupMemberIdentity: String): Flow<List<ExpenseShareEntity>>
 }

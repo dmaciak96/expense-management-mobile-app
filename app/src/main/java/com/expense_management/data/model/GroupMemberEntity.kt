@@ -11,8 +11,8 @@ data class GroupMemberEntity(
 
     val identity: String,
 
-    @ColumnInfo(name = "group_id")
-    val groupId: Int,
+    @ColumnInfo(name = "group_identity")
+    val groupIdentity: String,
 
     @ColumnInfo(name = "display_name")
     val displayName: String,

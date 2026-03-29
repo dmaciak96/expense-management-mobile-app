@@ -141,7 +141,7 @@ class ExpenseShareRepositoryTest : DatabaseTestSuite() {
         dao.insert(TEST_SHARE.copy(expenseId = 1, memberId = 2, minorUnits = 200, identity = SHARE_IDENTITY_2))
         dao.insert(TEST_SHARE.copy(expenseId = 2, memberId = 3, minorUnits = 300, identity = SHARE_IDENTITY_3))
 
-        val result = repository.getExpenseSharesByExpenseId(1)
+        val result = repository.getExpenseSharesByExpenseIdentity(1)
             .first { it is OperationResult.Success } as OperationResult.Success<List<ExpenseShareEntity>>
 
         assertThat(
@@ -154,14 +154,14 @@ class ExpenseShareRepositoryTest : DatabaseTestSuite() {
     }
 
     @Test
-    fun shouldGetExpenseSharesByGroupMemberId() = runTest(timeout = 1.seconds) {
+    fun shouldGetExpenseSharesByGroupMemberIdentity() = runTest(timeout = 1.seconds) {
         prepareRequiredData()
 
         dao.insert(TEST_SHARE.copy(memberId = 11, minorUnits = 100, identity = SHARE_IDENTITY_1))
         dao.insert(TEST_SHARE.copy(memberId = 11, minorUnits = 200, identity = SHARE_IDENTITY_2))
         dao.insert(TEST_SHARE.copy(memberId = 22, minorUnits = 300, identity = SHARE_IDENTITY_3))
 
-        val result = repository.getExpenseSharesByGroupMemberId(11)
+        val result = repository.getExpenseSharesByGroupMemberIdentity(11)
             .first { it is OperationResult.Success } as OperationResult.Success<List<ExpenseShareEntity>>
 
         assertThat(

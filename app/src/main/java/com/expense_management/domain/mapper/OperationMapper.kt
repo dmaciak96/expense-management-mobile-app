@@ -13,8 +13,8 @@ object OperationMapper {
     fun toEntity(operation: Operation) =
         OperationEntity(
             id = operation.id,
-            groupId = operation.groupId,
-            operationAuthorId = operation.operationAuthorId,
+            groupIdentity = operation.groupIdentity.toString(),
+            operationAuthorIdentity = operation.operationAuthorIdentity.toString(),
             createdAt = operation.createdAt.toEpochMilli(),
             lamportClock = operation.lamportClock,
             type = operation.type.name,
@@ -26,8 +26,8 @@ object OperationMapper {
     fun toDomain(operationEntity: OperationEntity) =
         Operation(
             id = operationEntity.id,
-            groupId = operationEntity.groupId,
-            operationAuthorId = operationEntity.operationAuthorId,
+            groupIdentity = UUID.fromString(operationEntity.groupIdentity),
+            operationAuthorIdentity = UUID.fromString(operationEntity.operationAuthorIdentity),
             createdAt = Instant.ofEpochMilli(operationEntity.createdAt),
             lamportClock = operationEntity.lamportClock,
             type = OperationType.valueOf(operationEntity.type),

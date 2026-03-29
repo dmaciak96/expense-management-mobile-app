@@ -24,7 +24,7 @@ import com.expense_management.data.model.UserIdentityEntity
         OperationEntity::class,
         UserIdentityEntity::class
     ],
-    version = 1
+    version = 2
 )
 abstract class AppDb : RoomDatabase() {
     abstract fun expenseDao(): ExpenseDao

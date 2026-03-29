@@ -39,7 +39,7 @@ interface ExpenseDao {
     @Query(
         """
             SELECT * FROM `expenses` as e
-            JOIN `expense_shares` as es ON e.id = es.expense_id
+            JOIN `expense_shares` as es ON e.identity = es.expense_identity
         """
     )
     fun getExpenseAndExpenseShares(): Flow<Map<ExpenseEntity, List<ExpenseShareEntity>>>
@@ -47,16 +47,16 @@ interface ExpenseDao {
     @Query(
         """
             SELECT * FROM `expenses` as e
-            WHERE e.group_id = :groupId
+            WHERE e.group_identity = :groupIdentity
         """
     )
-    fun getExpensesByGroupId(groupId: Int): Flow<List<ExpenseEntity>>
+    fun getExpensesByGroupIdentity(groupIdentity: String): Flow<List<ExpenseEntity>>
 
     @Query(
         """
             SELECT * FROM `expenses` AS e
-            WHERE e.paid_by_member_id = :groupMemberId
+            WHERE e.paid_by_member_identity = :groupMemberIdentity
         """
     )
-    fun getExpensesByGroupMemberId(groupMemberId: Int): Flow<List<ExpenseEntity>>
+    fun getExpensesByGroupMemberIdentity(groupMemberIdentity: String): Flow<List<ExpenseEntity>>
 }

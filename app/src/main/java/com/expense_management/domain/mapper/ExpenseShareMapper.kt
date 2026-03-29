@@ -10,8 +10,8 @@ object ExpenseShareMapper {
     fun toEntity(expenseShare: ExpenseShare) =
         ExpenseShareEntity(
             id = expenseShare.id,
-            expenseId = expenseShare.expenseId,
-            memberId = expenseShare.memberId,
+            expenseIdentity = expenseShare.expenseIdentity.toString(),
+            memberIdentity = expenseShare.memberIdentity.toString(),
             minorUnits = expenseShare.sharedAmount.minorUnits,
             currency = expenseShare.sharedAmount.currency.name,
             identity = expenseShare.identity.toString()
@@ -20,8 +20,8 @@ object ExpenseShareMapper {
     fun toDomain(expenseShareEntity: ExpenseShareEntity) =
         ExpenseShare(
             id = expenseShareEntity.id,
-            expenseId = expenseShareEntity.expenseId,
-            memberId = expenseShareEntity.memberId,
+            expenseIdentity = UUID.fromString(expenseShareEntity.expenseIdentity),
+            memberIdentity = UUID.fromString(expenseShareEntity.memberIdentity),
             sharedAmount = MonetaryAmount(
                 minorUnits = expenseShareEntity.minorUnits,
                 currency = CurrencyCode.valueOf(expenseShareEntity.currency)

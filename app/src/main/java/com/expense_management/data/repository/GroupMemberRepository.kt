@@ -24,18 +24,18 @@ class GroupMemberRepository @Inject constructor(
     suspend fun insert(groupMember: GroupMemberEntity): OperationResult<Unit> = try {
         Log.i(
             TAG,
-            "Saving new group member ${groupMember.displayName} for group ${groupMember.groupId}"
+            "Saving new group member ${groupMember.displayName} for group ${groupMember.groupIdentity}"
         )
         groupMemberDao.insert(groupMember)
         Log.i(
             TAG,
-            "Saving new group member ${groupMember.displayName} for group ${groupMember.groupId} finished successfully"
+            "Saving new group member ${groupMember.displayName} for group ${groupMember.groupIdentity} finished successfully"
         )
         Success(Unit)
     } catch (e: Exception) {
         Log.e(
             TAG,
-            "Failed to save new group member ${groupMember.displayName} for group ${groupMember.groupId}: ${e.message}"
+            "Failed to save new group member ${groupMember.displayName} for group ${groupMember.groupIdentity}: ${e.message}"
         )
         Error(e)
     }
@@ -43,18 +43,18 @@ class GroupMemberRepository @Inject constructor(
     suspend fun delete(groupMember: GroupMemberEntity): OperationResult<Unit> = try {
         Log.i(
             TAG,
-            "Deleting group member ${groupMember.displayName} from group ${groupMember.groupId}"
+            "Deleting group member ${groupMember.displayName} from group ${groupMember.groupIdentity}"
         )
         groupMemberDao.delete(groupMember)
         Log.i(
             TAG,
-            "Deleting group member ${groupMember.displayName} from group ${groupMember.groupId} finished successfully"
+            "Deleting group member ${groupMember.displayName} from group ${groupMember.groupIdentity} finished successfully"
         )
         Success(Unit)
     } catch (e: Exception) {
         Log.e(
             TAG,
-            "Failed to delete group member ${groupMember.displayName} from group ${groupMember.groupId}: ${e.message}"
+            "Failed to delete group member ${groupMember.displayName} from group ${groupMember.groupIdentity}: ${e.message}"
         )
         Error(e)
     }
@@ -62,18 +62,18 @@ class GroupMemberRepository @Inject constructor(
     suspend fun update(groupMember: GroupMemberEntity): OperationResult<Unit> = try {
         Log.i(
             TAG,
-            "Updating group member ${groupMember.displayName} in group ${groupMember.groupId}"
+            "Updating group member ${groupMember.displayName} in group ${groupMember.groupIdentity}"
         )
         groupMemberDao.update(groupMember)
         Log.i(
             TAG,
-            "Updating group member ${groupMember.displayName} in group ${groupMember.groupId} finished successfully"
+            "Updating group member ${groupMember.displayName} in group ${groupMember.groupIdentity} finished successfully"
         )
         Success(Unit)
     } catch (e: Exception) {
         Log.e(
             TAG,
-            "Failed to update group member ${groupMember.displayName} in group ${groupMember.groupId}: ${e.message}"
+            "Failed to update group member ${groupMember.displayName} in group ${groupMember.groupIdentity}: ${e.message}"
         )
         Error(e)
     }
@@ -107,17 +107,20 @@ class GroupMemberRepository @Inject constructor(
                 emit(Error(it))
             }
 
-    fun getGroupMembersByGroupId(groupId: Int): Flow<OperationResult<List<GroupMemberEntity>>> =
-        groupMemberDao.getGroupMembersByGroupId(groupId)
+    fun getGroupMembersByGroupIdentity(groupIdentity: UUID): Flow<OperationResult<List<GroupMemberEntity>>> =
+        groupMemberDao.getGroupMembersByGroupIdentity(groupIdentity.toString())
             .map<List<GroupMemberEntity>, OperationResult<List<GroupMemberEntity>>> {
                 Success(it)
             }
             .onStart {
-                Log.i(TAG, "Getting all group members for group $groupId")
+                Log.i(TAG, "Getting all group members for group $groupIdentity")
                 emit(Loading)
             }
             .catch {
-                Log.e(TAG, "Failed to get all group members for group $groupId: ${it.message}")
+                Log.e(
+                    TAG,
+                    "Failed to get all group members for group $groupIdentity: ${it.message}"
+                )
                 emit(Error(it))
             }
 
@@ -126,13 +129,13 @@ class GroupMemberRepository @Inject constructor(
             .map<Map<GroupMemberEntity, List<ExpenseEntity>>, OperationResult<Map<GroupMemberEntity, List<ExpenseEntity>>>> { rawMap ->
                 Success(
                     rawMap.entries
-                        .groupBy { it.key.id }
+                        .groupBy { it.key.identity }
                         .mapValues { (_, entries) ->
                             entries.flatMap { it.value }
                         }
                         .map { (_, expenses) ->
                             val representativeKey = rawMap.keys.first { key ->
-                                key.id == expenses.firstOrNull()?.paidByMemberId || rawMap[key] == expenses
+                                key.identity == expenses.firstOrNull()?.paidByMemberIdentity || rawMap[key] == expenses
                             }
                             representativeKey to expenses
                         }
@@ -153,12 +156,13 @@ class GroupMemberRepository @Inject constructor(
             .map<Map<GroupMemberEntity, List<ExpenseShareEntity>>, OperationResult<Map<GroupMemberEntity, List<ExpenseShareEntity>>>> { rawMap ->
                 Success(
                     rawMap.entries
-                        .groupBy { it.key.id }
+                        .groupBy { it.key.identity }
                         .mapValues { (_, entries) ->
                             entries.flatMap { it.value }
                         }
-                        .map { (memberId, shares) ->
-                            val representativeKey = rawMap.keys.first { it.id == memberId }
+                        .map { (memberIdentity, shares) ->
+                            val representativeKey =
+                                rawMap.keys.first { it.identity == memberIdentity }
                             representativeKey to shares
                         }
                         .toMap()
@@ -178,12 +182,13 @@ class GroupMemberRepository @Inject constructor(
             .map<Map<GroupMemberEntity, List<OperationEntity>>, OperationResult<Map<GroupMemberEntity, List<OperationEntity>>>> { rawMap ->
                 Success(
                     rawMap.entries
-                        .groupBy { it.key.id }
+                        .groupBy { it.key.identity }
                         .mapValues { (_, entries) ->
                             entries.flatMap { it.value }
                         }
-                        .map { (memberId, operations) ->
-                            val representativeKey = rawMap.keys.first { it.id == memberId }
+                        .map { (memberIdentity, operations) ->
+                            val representativeKey =
+                                rawMap.keys.first { it.identity == memberIdentity }
                             representativeKey to operations
                         }
                         .toMap()

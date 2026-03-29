@@ -42,7 +42,7 @@ interface GroupDao {
     @Query(
         """
             SELECT * FROM `groups` as g
-            JOIN `group_members` as m ON g.id = m.group_id
+            JOIN `group_members` as m ON g.identity = m.group_identity
         """
     )
     fun getGroupAndGroupMembers(): Flow<Map<GroupEntity, List<GroupMemberEntity>>>
@@ -50,7 +50,7 @@ interface GroupDao {
     @Query(
         """
             SELECT * FROM `groups` as g
-            JOIN `expenses` as e ON g.id = e.group_id
+            JOIN `expenses` as e ON g.identity = e.group_identity
         """
     )
     fun getGroupAndExpenses(): Flow<Map<GroupEntity, List<ExpenseEntity>>>
@@ -58,7 +58,7 @@ interface GroupDao {
     @Query(
         """
             SELECT * FROM `groups` as g
-            JOIN `operations` as o ON g.id = o.group_id
+            JOIN `operations` as o ON g.identity = o.group_identity
         """
     )
     fun getGroupAndOperations(): Flow<Map<GroupEntity, List<OperationEntity>>>

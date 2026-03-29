@@ -145,7 +145,7 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
     }
 
     @Test
-    fun shouldGetGroupMembersByGroupId() = runTest(timeout = 1.seconds) {
+    fun shouldGetGroupMembersByGroupIdentity() = runTest(timeout = 1.seconds) {
         val groupDao = db.groupDao()
         groupDao.insert(TEST_GROUP)
         groupDao.insert(
@@ -160,7 +160,7 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         dao.insert(TEST_MEMBER.copy(groupId = 1, displayName = "member2", publicKey = byteArrayOf(2), identity = MEMBER_IDENTITY_2))
         dao.insert(TEST_MEMBER.copy(groupId = 2, displayName = "member3", publicKey = byteArrayOf(3), identity = MEMBER_IDENTITY_3))
 
-        val result = repository.getGroupMembersByGroupId(1)
+        val result = repository.getGroupMembersByGroupIdentity(1)
             .first { it is OperationResult.Success } as OperationResult.Success<List<GroupMemberEntity>>
 
         assertThat(result.data.size, equalTo(2))

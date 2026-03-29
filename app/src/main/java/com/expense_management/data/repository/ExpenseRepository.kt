@@ -94,31 +94,34 @@ class ExpenseRepository @Inject constructor(
                 emit(Error(it))
             }
 
-    fun getExpensesByGroupId(groupId: Int): Flow<OperationResult<List<ExpenseEntity>>> =
-        expenseDao.getExpensesByGroupId(groupId)
+    fun getExpensesByGroupIdentity(groupIdentity: UUID): Flow<OperationResult<List<ExpenseEntity>>> =
+        expenseDao.getExpensesByGroupIdentity(groupIdentity.toString())
             .map<List<ExpenseEntity>, OperationResult<List<ExpenseEntity>>> {
                 Success(it)
             }
             .onStart {
-                Log.i(TAG, "Getting all expenses from group $groupId")
+                Log.i(TAG, "Getting all expenses from group $groupIdentity")
                 emit(Loading)
             }
             .catch {
-                Log.e(TAG, "Failed to get expenses from group $groupId: ${it.message}")
+                Log.e(TAG, "Failed to get expenses from group $groupIdentity: ${it.message}")
                 emit(Error(it))
             }
 
-    fun getExpensesByGroupMemberId(groupMemberId: Int): Flow<OperationResult<List<ExpenseEntity>>> =
-        expenseDao.getExpensesByGroupMemberId(groupMemberId)
+    fun getExpensesByGroupMemberIdentity(groupMemberIdentity: UUID): Flow<OperationResult<List<ExpenseEntity>>> =
+        expenseDao.getExpensesByGroupMemberIdentity(groupMemberIdentity.toString())
             .map<List<ExpenseEntity>, OperationResult<List<ExpenseEntity>>> {
                 Success(it)
             }
             .onStart {
-                Log.i(TAG, "Getting all expenses by group member $groupMemberId")
+                Log.i(TAG, "Getting all expenses by group member $groupMemberIdentity")
                 emit(Loading)
             }
             .catch {
-                Log.e(TAG, "Failed to get expenses by group member $groupMemberId: ${it.message}")
+                Log.e(
+                    TAG,
+                    "Failed to get expenses by group member $groupMemberIdentity: ${it.message}"
+                )
                 emit(Error(it))
             }
 

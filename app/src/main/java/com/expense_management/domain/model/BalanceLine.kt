@@ -1,7 +1,9 @@
 package com.expense_management.domain.model
 
+import java.util.UUID
+
 data class BalanceLine(
-    val fromMemberId: Int,
-    val toMemberId: Int,
+    val fromMemberIdentity: UUID,
+    val toMemberIdentity: UUID,
     val amount: MonetaryAmount
 )

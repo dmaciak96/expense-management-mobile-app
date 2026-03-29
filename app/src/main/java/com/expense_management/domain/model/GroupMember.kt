@@ -6,7 +6,7 @@ import java.util.UUID
 data class GroupMember(
     val id: Int,
     val identity: UUID,
-    val groupId: Int,
+    val groupIdentity: UUID,
     val displayName: String,
     val publicKey: PublicKey,
     val role: GroupRole

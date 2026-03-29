@@ -185,8 +185,8 @@ class ExpenseRepositoryTest : DatabaseTestSuite() {
         val expense2 = TEST_EXPENSE.copy(id = 2, name = "expense2", minorUnits = MINOR_UNITS + 100)
 
         val share1 = ExpenseShareEntity(
-            expenseId = 1,
-            memberId = 1,
+            expenseIdentity = 1,
+            memberIdentity = 1,
             minorUnits = 500,
             currency = CURRENCY,
             identity = identity1
@@ -230,7 +230,7 @@ class ExpenseRepositoryTest : DatabaseTestSuite() {
     }
 
     @Test
-    fun shouldGetExpensesByGroupId() = runTest(timeout = 1.seconds) {
+    fun shouldGetExpensesByGroupIdentity() = runTest(timeout = 1.seconds) {
         val groupDao = db.groupDao()
         groupDao.insert(TEST_GROUP)
         groupDao.insert(TEST_GROUP.copy(name = "group2", createdAt = CREATED_AT + 100))
@@ -243,7 +243,7 @@ class ExpenseRepositoryTest : DatabaseTestSuite() {
         dao.insert(expense2)
         dao.insert(expense3)
 
-        val result = repository.getExpensesByGroupId(1)
+        val result = repository.getExpensesByGroupIdentity(1)
             .first { it is OperationResult.Success } as OperationResult.Success<List<ExpenseEntity>>
 
         assertThat(
@@ -256,7 +256,7 @@ class ExpenseRepositoryTest : DatabaseTestSuite() {
     }
 
     @Test
-    fun shouldGetExpensesByGroupMemberId() = runTest(timeout = 1.seconds) {
+    fun shouldGetExpensesByGroupMemberIdentity() = runTest(timeout = 1.seconds) {
         val groupDao = db.groupDao()
         groupDao.insert(TEST_GROUP)
 
@@ -268,7 +268,7 @@ class ExpenseRepositoryTest : DatabaseTestSuite() {
         dao.insert(expense2)
         dao.insert(expense3)
 
-        val result = repository.getExpensesByGroupMemberId(11)
+        val result = repository.getExpensesByGroupMemberIdentity(11)
             .first { it is OperationResult.Success } as OperationResult.Success<List<ExpenseEntity>>
 
         assertThat(

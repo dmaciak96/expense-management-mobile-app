@@ -8,8 +8,8 @@ import java.util.UUID
 data class Operation(
     val id: Int,
     val identity: UUID,
-    val groupId: Int,
-    val operationAuthorId: Int,
+    val groupIdentity: UUID,
+    val operationAuthorIdentity: UUID,
 
     // for UI/human time only (not used for conflict resolution)
     val createdAt: Instant,

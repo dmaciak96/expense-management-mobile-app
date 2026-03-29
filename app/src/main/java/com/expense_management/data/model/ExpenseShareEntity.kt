@@ -11,11 +11,11 @@ data class ExpenseShareEntity(
 
     val identity: String,
 
-    @ColumnInfo(name = "expense_id")
-    val expenseId: Int,
+    @ColumnInfo(name = "expense_identity")
+    val expenseIdentity: String,
 
-    @ColumnInfo(name = "member_id")
-    val memberId: Int,
+    @ColumnInfo(name = "member_identity")
+    val memberIdentity: String,
 
     @ColumnInfo(name = "minor_units")
     val minorUnits: Long,

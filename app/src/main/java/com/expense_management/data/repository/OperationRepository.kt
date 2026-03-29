@@ -21,18 +21,18 @@ class OperationRepository @Inject constructor(
     suspend fun insert(operationEntity: OperationEntity): OperationResult<Unit> = try {
         Log.i(
             TAG,
-            "Saving new operation ${operationEntity.type} for group ${operationEntity.groupId}"
+            "Saving new operation ${operationEntity.type} for group ${operationEntity.groupIdentity}"
         )
         operationDao.insert(operationEntity)
         Log.i(
             TAG,
-            "Operation ${operationEntity.type} for group ${operationEntity.groupId} was successfully saved"
+            "Operation ${operationEntity.type} for group ${operationEntity.groupIdentity} was successfully saved"
         )
         Success(Unit)
     } catch (e: Exception) {
         Log.e(
             TAG,
-            "Failed to save ${operationEntity.type} for group ${operationEntity.groupId}: ${e.message}"
+            "Failed to save ${operationEntity.type} for group ${operationEntity.groupIdentity}: ${e.message}"
         )
         Error(e)
     }
@@ -61,29 +61,29 @@ class OperationRepository @Inject constructor(
                 emit(Error(it))
             }
 
-    fun getOperationsByGroupId(groupId: Int): Flow<OperationResult<List<OperationEntity>>> =
-        operationDao.getOperationsByGroupId(groupId)
+    fun getOperationsByGroupIdentity(groupIdentity: UUID): Flow<OperationResult<List<OperationEntity>>> =
+        operationDao.getOperationsByGroupIdentity(groupIdentity.toString())
             .map<List<OperationEntity>, OperationResult<List<OperationEntity>>> { Success(it) }
             .onStart {
-                Log.i(TAG, "Getting all operations by group id $groupId")
+                Log.i(TAG, "Getting all operations by group id $groupIdentity")
                 emit(Loading)
             }
             .catch {
-                Log.e(TAG, "Failed to get all operations by group id $groupId: ${it.message}")
+                Log.e(TAG, "Failed to get all operations by group id $groupIdentity: ${it.message}")
                 emit(Error(it))
             }
 
-    fun getOperationsByGroupMemberId(groupMemberId: Int): Flow<OperationResult<List<OperationEntity>>> =
-        operationDao.getOperationsByGroupMemberId(groupMemberId)
+    fun getOperationsByGroupMemberIdentity(groupMemberIdentity: UUID): Flow<OperationResult<List<OperationEntity>>> =
+        operationDao.getOperationsByGroupMemberIdentity(groupMemberIdentity.toString())
             .map<List<OperationEntity>, OperationResult<List<OperationEntity>>> { Success(it) }
             .onStart {
-                Log.i(TAG, "Getting all operations by group member id $groupMemberId")
+                Log.i(TAG, "Getting all operations by group member id $groupMemberIdentity")
                 emit(Loading)
             }
             .catch {
                 Log.e(
                     TAG,
-                    "Failed to get all operations by group member id $groupMemberId: ${it.message}"
+                    "Failed to get all operations by group member id $groupMemberIdentity: ${it.message}"
                 )
                 emit(Error(it))
             }

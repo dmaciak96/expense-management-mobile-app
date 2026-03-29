@@ -7,10 +7,11 @@ import com.expense_management.data.repository.ExpenseRepository
 import com.expense_management.domain.mapper.ExpenseMapper
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.map
+import java.util.UUID
 
-class GetAllExpensesByGroupIdUseCase @Inject constructor(private val repository: ExpenseRepository) {
-    operator fun invoke(groupId: Int) =
-        repository.getExpensesByGroupId(groupId)
+class GetAllExpensesByGroupMemberIdentityUseCase @Inject constructor(private val repository: ExpenseRepository) {
+    operator fun invoke(groupMemberIdentity: UUID) =
+        repository.getExpensesByGroupMemberIdentity(groupMemberIdentity)
             .map { result ->
                 when (result) {
                     is Success -> Success(ExpenseMapper.toDomainList(result.data))

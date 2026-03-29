@@ -13,7 +13,7 @@ object GroupMemberMapper {
     fun toEntity(groupMember: GroupMember) =
         GroupMemberEntity(
             id = groupMember.id,
-            groupId = groupMember.groupId,
+            groupIdentity = groupMember.groupIdentity.toString(),
             displayName = groupMember.displayName,
             publicKey = groupMember.publicKey.toByteArray(),
             role = groupMember.role.name,
@@ -23,7 +23,7 @@ object GroupMemberMapper {
     fun toDomain(groupMemberEntity: GroupMemberEntity) =
         GroupMember(
             id = groupMemberEntity.id,
-            groupId = groupMemberEntity.groupId,
+            groupIdentity = UUID.fromString(groupMemberEntity.groupIdentity),
             displayName = groupMemberEntity.displayName,
             publicKey = PublicKey.from(groupMemberEntity.publicKey),
             role = GroupRole.valueOf(groupMemberEntity.role),
