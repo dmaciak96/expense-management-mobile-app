@@ -48,9 +48,30 @@ class OperationRepositoryTest : DatabaseTestSuite() {
         val groupDao = db.groupDao()
         groupDao.insert(TEST_GROUP)
 
-        dao.insert(TEST_OPERATION.copy(type = "type1", payload = byteArrayOf(1), signature = byteArrayOf(11), identity = OPERATION_IDENTITY_1))
-        dao.insert(TEST_OPERATION.copy(type = "type2", payload = byteArrayOf(2), signature = byteArrayOf(22), identity = OPERATION_IDENTITY_2))
-        dao.insert(TEST_OPERATION.copy(type = "type3", payload = byteArrayOf(3), signature = byteArrayOf(33), identity = OPERATION_IDENTITY_3))
+        dao.insert(
+            TEST_OPERATION.copy(
+                type = "type1",
+                payload = byteArrayOf(1),
+                signature = byteArrayOf(11),
+                identity = OPERATION_IDENTITY_1
+            )
+        )
+        dao.insert(
+            TEST_OPERATION.copy(
+                type = "type2",
+                payload = byteArrayOf(2),
+                signature = byteArrayOf(22),
+                identity = OPERATION_IDENTITY_2
+            )
+        )
+        dao.insert(
+            TEST_OPERATION.copy(
+                type = "type3",
+                payload = byteArrayOf(3),
+                signature = byteArrayOf(33),
+                identity = OPERATION_IDENTITY_3
+            )
+        )
 
         val result = repository.getAll()
             .first { it is OperationResult.Success } as OperationResult.Success<List<OperationEntity>>
@@ -58,15 +79,33 @@ class OperationRepositoryTest : DatabaseTestSuite() {
         assertThat(result.data.size, equalTo(3))
         assertContainsOperation(
             result.data,
-            TEST_OPERATION.copy(id = 1, type = "type1", payload = byteArrayOf(1), signature = byteArrayOf(11), identity = OPERATION_IDENTITY_1)
+            TEST_OPERATION.copy(
+                id = 1,
+                type = "type1",
+                payload = byteArrayOf(1),
+                signature = byteArrayOf(11),
+                identity = OPERATION_IDENTITY_1
+            )
         )
         assertContainsOperation(
             result.data,
-            TEST_OPERATION.copy(id = 2, type = "type2", payload = byteArrayOf(2), signature = byteArrayOf(22), identity = OPERATION_IDENTITY_2)
+            TEST_OPERATION.copy(
+                id = 2,
+                type = "type2",
+                payload = byteArrayOf(2),
+                signature = byteArrayOf(22),
+                identity = OPERATION_IDENTITY_2
+            )
         )
         assertContainsOperation(
             result.data,
-            TEST_OPERATION.copy(id = 3, type = "type3", payload = byteArrayOf(3), signature = byteArrayOf(33), identity = OPERATION_IDENTITY_3)
+            TEST_OPERATION.copy(
+                id = 3,
+                type = "type3",
+                payload = byteArrayOf(3),
+                signature = byteArrayOf(33),
+                identity = OPERATION_IDENTITY_3
+            )
         )
     }
 
@@ -75,9 +114,30 @@ class OperationRepositoryTest : DatabaseTestSuite() {
         val groupDao = db.groupDao()
         groupDao.insert(TEST_GROUP)
 
-        dao.insert(TEST_OPERATION.copy(type = "type1", payload = byteArrayOf(1), signature = byteArrayOf(11), identity = OPERATION_IDENTITY_1))
-        dao.insert(TEST_OPERATION.copy(type = "type2", payload = byteArrayOf(2), signature = byteArrayOf(22), identity = OPERATION_IDENTITY_2))
-        dao.insert(TEST_OPERATION.copy(type = "type3", payload = byteArrayOf(3), signature = byteArrayOf(33), identity = OPERATION_IDENTITY_3))
+        dao.insert(
+            TEST_OPERATION.copy(
+                type = "type1",
+                payload = byteArrayOf(1),
+                signature = byteArrayOf(11),
+                identity = OPERATION_IDENTITY_1
+            )
+        )
+        dao.insert(
+            TEST_OPERATION.copy(
+                type = "type2",
+                payload = byteArrayOf(2),
+                signature = byteArrayOf(22),
+                identity = OPERATION_IDENTITY_2
+            )
+        )
+        dao.insert(
+            TEST_OPERATION.copy(
+                type = "type3",
+                payload = byteArrayOf(3),
+                signature = byteArrayOf(33),
+                identity = OPERATION_IDENTITY_3
+            )
+        )
 
         val result1 = repository.getByIdentity(UUID.fromString(OPERATION_IDENTITY_1))
             .first { it is OperationResult.Success } as OperationResult.Success<OperationEntity?>
@@ -89,15 +149,33 @@ class OperationRepositoryTest : DatabaseTestSuite() {
             .first { it is OperationResult.Success } as OperationResult.Success<OperationEntity?>
 
         assertOperationEquals(
-            TEST_OPERATION.copy(id = 1, type = "type1", payload = byteArrayOf(1), signature = byteArrayOf(11), identity = OPERATION_IDENTITY_1),
+            TEST_OPERATION.copy(
+                id = 1,
+                type = "type1",
+                payload = byteArrayOf(1),
+                signature = byteArrayOf(11),
+                identity = OPERATION_IDENTITY_1
+            ),
             result1.data
         )
         assertOperationEquals(
-            TEST_OPERATION.copy(id = 2, type = "type2", payload = byteArrayOf(2), signature = byteArrayOf(22), identity = OPERATION_IDENTITY_2),
+            TEST_OPERATION.copy(
+                id = 2,
+                type = "type2",
+                payload = byteArrayOf(2),
+                signature = byteArrayOf(22),
+                identity = OPERATION_IDENTITY_2
+            ),
             result2.data
         )
         assertOperationEquals(
-            TEST_OPERATION.copy(id = 3, type = "type3", payload = byteArrayOf(3), signature = byteArrayOf(33), identity = OPERATION_IDENTITY_3),
+            TEST_OPERATION.copy(
+                id = 3,
+                type = "type3",
+                payload = byteArrayOf(3),
+                signature = byteArrayOf(33),
+                identity = OPERATION_IDENTITY_3
+            ),
             result3.data
         )
         assertThat(emptyResult.data, equalTo(null))
@@ -109,21 +187,59 @@ class OperationRepositoryTest : DatabaseTestSuite() {
         groupDao.insert(TEST_GROUP)
         groupDao.insert(TEST_GROUP.copy(name = "group2", createdAt = CREATED_AT + 100, identity = GROUP_IDENTITY_2))
 
-        dao.insert(TEST_OPERATION.copy(groupId = 1, type = "type1", payload = byteArrayOf(1), signature = byteArrayOf(11), identity = OPERATION_IDENTITY_1))
-        dao.insert(TEST_OPERATION.copy(groupId = 1, type = "type2", payload = byteArrayOf(2), signature = byteArrayOf(22), identity = OPERATION_IDENTITY_2))
-        dao.insert(TEST_OPERATION.copy(groupId = 2, type = "type3", payload = byteArrayOf(3), signature = byteArrayOf(33), identity = OPERATION_IDENTITY_3))
+        dao.insert(
+            TEST_OPERATION.copy(
+                groupIdentity = GROUP_IDENTITY,
+                type = "type1",
+                payload = byteArrayOf(1),
+                signature = byteArrayOf(11),
+                identity = OPERATION_IDENTITY_1
+            )
+        )
+        dao.insert(
+            TEST_OPERATION.copy(
+                groupIdentity = GROUP_IDENTITY,
+                type = "type2",
+                payload = byteArrayOf(2),
+                signature = byteArrayOf(22),
+                identity = OPERATION_IDENTITY_2
+            )
+        )
+        dao.insert(
+            TEST_OPERATION.copy(
+                groupIdentity = GROUP_IDENTITY_2,
+                type = "type3",
+                payload = byteArrayOf(3),
+                signature = byteArrayOf(33),
+                identity = OPERATION_IDENTITY_3
+            )
+        )
 
-        val result = repository.getOperationsByGroupIdentity(1)
+        val result = repository.getOperationsByGroupIdentity(UUID.fromString(GROUP_IDENTITY))
             .first { it is OperationResult.Success } as OperationResult.Success<List<OperationEntity>>
 
         assertThat(result.data.size, equalTo(2))
         assertContainsOperation(
             result.data,
-            TEST_OPERATION.copy(id = 1, groupId = 1, type = "type1", payload = byteArrayOf(1), signature = byteArrayOf(11), identity = OPERATION_IDENTITY_1)
+            TEST_OPERATION.copy(
+                id = 1,
+                groupIdentity = GROUP_IDENTITY,
+                type = "type1",
+                payload = byteArrayOf(1),
+                signature = byteArrayOf(11),
+                identity = OPERATION_IDENTITY_1
+            )
         )
         assertContainsOperation(
             result.data,
-            TEST_OPERATION.copy(id = 2, groupId = 1, type = "type2", payload = byteArrayOf(2), signature = byteArrayOf(22), identity = OPERATION_IDENTITY_2)
+            TEST_OPERATION.copy(
+                id = 2,
+                groupIdentity = GROUP_IDENTITY,
+                type = "type2",
+                payload = byteArrayOf(2),
+                signature = byteArrayOf(22),
+                identity = OPERATION_IDENTITY_2
+            )
         )
     }
 
@@ -132,29 +248,67 @@ class OperationRepositoryTest : DatabaseTestSuite() {
         val groupDao = db.groupDao()
         groupDao.insert(TEST_GROUP)
 
-        dao.insert(TEST_OPERATION.copy(operationAuthorId = 11, type = "type1", payload = byteArrayOf(1), signature = byteArrayOf(11), identity = OPERATION_IDENTITY_1))
-        dao.insert(TEST_OPERATION.copy(operationAuthorId = 11, type = "type2", payload = byteArrayOf(2), signature = byteArrayOf(22), identity = OPERATION_IDENTITY_2))
-        dao.insert(TEST_OPERATION.copy(operationAuthorId = 22, type = "type3", payload = byteArrayOf(3), signature = byteArrayOf(33), identity = OPERATION_IDENTITY_3))
+        dao.insert(
+            TEST_OPERATION.copy(
+                operationAuthorIdentity = OPERATION_AUTHOR_IDENTITY,
+                type = "type1",
+                payload = byteArrayOf(1),
+                signature = byteArrayOf(11),
+                identity = OPERATION_IDENTITY_1
+            )
+        )
+        dao.insert(
+            TEST_OPERATION.copy(
+                operationAuthorIdentity = OPERATION_AUTHOR_IDENTITY,
+                type = "type2",
+                payload = byteArrayOf(2),
+                signature = byteArrayOf(22),
+                identity = OPERATION_IDENTITY_2
+            )
+        )
+        dao.insert(
+            TEST_OPERATION.copy(
+                operationAuthorIdentity = OPERATION_AUTHOR_IDENTITY_2,
+                type = "type3",
+                payload = byteArrayOf(3),
+                signature = byteArrayOf(33),
+                identity = OPERATION_IDENTITY_3
+            )
+        )
 
-        val result = repository.getOperationsByGroupMemberIdentity(11)
+        val result = repository.getOperationsByGroupMemberIdentity(UUID.fromString(OPERATION_AUTHOR_IDENTITY))
             .first { it is OperationResult.Success } as OperationResult.Success<List<OperationEntity>>
 
         assertThat(result.data.size, equalTo(2))
         assertContainsOperation(
             result.data,
-            TEST_OPERATION.copy(id = 1, operationAuthorId = 11, type = "type1", payload = byteArrayOf(1), signature = byteArrayOf(11), identity = OPERATION_IDENTITY_1)
+            TEST_OPERATION.copy(
+                id = 1,
+                operationAuthorIdentity = OPERATION_AUTHOR_IDENTITY,
+                type = "type1",
+                payload = byteArrayOf(1),
+                signature = byteArrayOf(11),
+                identity = OPERATION_IDENTITY_1
+            )
         )
         assertContainsOperation(
             result.data,
-            TEST_OPERATION.copy(id = 2, operationAuthorId = 11, type = "type2", payload = byteArrayOf(2), signature = byteArrayOf(22), identity = OPERATION_IDENTITY_2)
+            TEST_OPERATION.copy(
+                id = 2,
+                operationAuthorIdentity = OPERATION_AUTHOR_IDENTITY,
+                type = "type2",
+                payload = byteArrayOf(2),
+                signature = byteArrayOf(22),
+                identity = OPERATION_IDENTITY_2
+            )
         )
     }
 
     private fun assertContainsOperation(actual: List<OperationEntity>, expected: OperationEntity) {
         val found = actual.any {
             it.id == expected.id &&
-                    it.groupId == expected.groupId &&
-                    it.operationAuthorId == expected.operationAuthorId &&
+                    it.groupIdentity == expected.groupIdentity &&
+                    it.operationAuthorIdentity == expected.operationAuthorIdentity &&
                     it.createdAt == expected.createdAt &&
                     it.lamportClock == expected.lamportClock &&
                     it.type == expected.type &&
@@ -172,8 +326,8 @@ class OperationRepositoryTest : DatabaseTestSuite() {
         }
 
         assertThat(actual.id, equalTo(expected.id))
-        assertThat(actual.groupId, equalTo(expected.groupId))
-        assertThat(actual.operationAuthorId, equalTo(expected.operationAuthorId))
+        assertThat(actual.groupIdentity, equalTo(expected.groupIdentity))
+        assertThat(actual.operationAuthorIdentity, equalTo(expected.operationAuthorIdentity))
         assertThat(actual.createdAt, equalTo(expected.createdAt))
         assertThat(actual.lamportClock, equalTo(expected.lamportClock))
         assertThat(actual.type, equalTo(expected.type))
@@ -187,10 +341,12 @@ class OperationRepositoryTest : DatabaseTestSuite() {
         private const val CREATED_AT = 12345L
         private const val OPERATION_TYPE = "test_type"
         private const val LAMPORT_CLOCK = 1234L
-        private const val OPERATION_AUTHOR_ID = 11
 
         private const val GROUP_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c90"
         private const val GROUP_IDENTITY_2 = "dfa4e836-190a-4292-a3fe-c516c1d99c91"
+
+        private const val OPERATION_AUTHOR_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c97"
+        private const val OPERATION_AUTHOR_IDENTITY_2 = "dfa4e836-190a-4292-a3fe-c516c1d99c98"
 
         private const val OPERATION_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c92"
         private const val OPERATION_IDENTITY_1 = "dfa4e836-190a-4292-a3fe-c516c1d99c93"
@@ -205,8 +361,8 @@ class OperationRepositoryTest : DatabaseTestSuite() {
         )
 
         private val TEST_OPERATION = OperationEntity(
-            groupId = 1,
-            operationAuthorId = OPERATION_AUTHOR_ID,
+            groupIdentity = GROUP_IDENTITY,
+            operationAuthorIdentity = OPERATION_AUTHOR_IDENTITY,
             createdAt = CREATED_AT,
             lamportClock = LAMPORT_CLOCK,
             type = OPERATION_TYPE,

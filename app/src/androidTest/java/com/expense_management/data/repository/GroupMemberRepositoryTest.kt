@@ -156,21 +156,54 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
             )
         )
 
-        dao.insert(TEST_MEMBER.copy(groupId = 1, displayName = "member1", publicKey = byteArrayOf(1), identity = MEMBER_IDENTITY_1))
-        dao.insert(TEST_MEMBER.copy(groupId = 1, displayName = "member2", publicKey = byteArrayOf(2), identity = MEMBER_IDENTITY_2))
-        dao.insert(TEST_MEMBER.copy(groupId = 2, displayName = "member3", publicKey = byteArrayOf(3), identity = MEMBER_IDENTITY_3))
+        dao.insert(
+            TEST_MEMBER.copy(
+                groupIdentity = GROUP_IDENTITY,
+                displayName = "member1",
+                publicKey = byteArrayOf(1),
+                identity = MEMBER_IDENTITY_1
+            )
+        )
+        dao.insert(
+            TEST_MEMBER.copy(
+                groupIdentity = GROUP_IDENTITY,
+                displayName = "member2",
+                publicKey = byteArrayOf(2),
+                identity = MEMBER_IDENTITY_2
+            )
+        )
+        dao.insert(
+            TEST_MEMBER.copy(
+                groupIdentity = GROUP_IDENTITY_2,
+                displayName = "member3",
+                publicKey = byteArrayOf(3),
+                identity = MEMBER_IDENTITY_3
+            )
+        )
 
-        val result = repository.getGroupMembersByGroupIdentity(1)
+        val result = repository.getGroupMembersByGroupIdentity(UUID.fromString(GROUP_IDENTITY))
             .first { it is OperationResult.Success } as OperationResult.Success<List<GroupMemberEntity>>
 
         assertThat(result.data.size, equalTo(2))
         assertContainsGroupMember(
             result.data,
-            TEST_MEMBER.copy(id = 1, groupId = 1, displayName = "member1", publicKey = byteArrayOf(1), identity = MEMBER_IDENTITY_1)
+            TEST_MEMBER.copy(
+                id = 1,
+                groupIdentity = GROUP_IDENTITY,
+                displayName = "member1",
+                publicKey = byteArrayOf(1),
+                identity = MEMBER_IDENTITY_1
+            )
         )
         assertContainsGroupMember(
             result.data,
-            TEST_MEMBER.copy(id = 2, groupId = 1, displayName = "member2", publicKey = byteArrayOf(2), identity = MEMBER_IDENTITY_2)
+            TEST_MEMBER.copy(
+                id = 2,
+                groupIdentity = GROUP_IDENTITY,
+                displayName = "member2",
+                publicKey = byteArrayOf(2),
+                identity = MEMBER_IDENTITY_2
+            )
         )
     }
 
@@ -180,13 +213,27 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         val expenseDao = db.expenseDao()
 
         groupDao.insert(TEST_GROUP)
-        dao.insert(TEST_MEMBER.copy(id = 0, displayName = "member1", publicKey = byteArrayOf(1), identity = MEMBER_IDENTITY_1))
-        dao.insert(TEST_MEMBER.copy(id = 0, displayName = "member2", publicKey = byteArrayOf(2), identity = MEMBER_IDENTITY_2))
+        dao.insert(
+            TEST_MEMBER.copy(
+                id = 0,
+                displayName = "member1",
+                publicKey = byteArrayOf(1),
+                identity = MEMBER_IDENTITY_1
+            )
+        )
+        dao.insert(
+            TEST_MEMBER.copy(
+                id = 0,
+                displayName = "member2",
+                publicKey = byteArrayOf(2),
+                identity = MEMBER_IDENTITY_2
+            )
+        )
 
         expenseDao.insert(
             ExpenseEntity(
-                groupId = 1,
-                paidByMemberId = 1,
+                groupIdentity = GROUP_IDENTITY,
+                paidByMemberIdentity = MEMBER_IDENTITY_1,
                 createdAt = CREATED_AT,
                 name = "expense1",
                 minorUnits = 100,
@@ -196,8 +243,8 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         )
         expenseDao.insert(
             ExpenseEntity(
-                groupId = 1,
-                paidByMemberId = 1,
+                groupIdentity = GROUP_IDENTITY,
+                paidByMemberIdentity = MEMBER_IDENTITY_1,
                 createdAt = CREATED_AT + 1,
                 name = "expense2",
                 minorUnits = 200,
@@ -207,8 +254,8 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         )
         expenseDao.insert(
             ExpenseEntity(
-                groupId = 1,
-                paidByMemberId = 2,
+                groupIdentity = GROUP_IDENTITY,
+                paidByMemberIdentity = MEMBER_IDENTITY_2,
                 createdAt = CREATED_AT + 2,
                 name = "expense3",
                 minorUnits = 300,
@@ -239,13 +286,27 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         expenseDao.insert(TEST_EXPENSE)
         expenseDao.insert(TEST_EXPENSE.copy(name = "expense2", identity = EXPENSE_IDENTITY_2))
 
-        dao.insert(TEST_MEMBER.copy(id = 0, displayName = "member1", publicKey = byteArrayOf(1), identity = MEMBER_IDENTITY_1))
-        dao.insert(TEST_MEMBER.copy(id = 0, displayName = "member2", publicKey = byteArrayOf(2), identity = MEMBER_IDENTITY_2))
+        dao.insert(
+            TEST_MEMBER.copy(
+                id = 0,
+                displayName = "member1",
+                publicKey = byteArrayOf(1),
+                identity = MEMBER_IDENTITY_1
+            )
+        )
+        dao.insert(
+            TEST_MEMBER.copy(
+                id = 0,
+                displayName = "member2",
+                publicKey = byteArrayOf(2),
+                identity = MEMBER_IDENTITY_2
+            )
+        )
 
         shareDao.insert(
             ExpenseShareEntity(
-                expenseId = 1,
-                memberId = 1,
+                expenseIdentity = EXPENSE_IDENTITY,
+                memberIdentity = MEMBER_IDENTITY_1,
                 minorUnits = 50,
                 currency = CURRENCY,
                 identity = SHARE_IDENTITY_1
@@ -253,8 +314,8 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         )
         shareDao.insert(
             ExpenseShareEntity(
-                expenseId = 2,
-                memberId = 1,
+                expenseIdentity = EXPENSE_IDENTITY_2,
+                memberIdentity = MEMBER_IDENTITY_1,
                 minorUnits = 70,
                 currency = CURRENCY,
                 identity = SHARE_IDENTITY_2
@@ -262,8 +323,8 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         )
         shareDao.insert(
             ExpenseShareEntity(
-                expenseId = 1,
-                memberId = 2,
+                expenseIdentity = EXPENSE_IDENTITY,
+                memberIdentity = MEMBER_IDENTITY_2,
                 minorUnits = 30,
                 currency = CURRENCY,
                 identity = SHARE_IDENTITY_3
@@ -288,13 +349,27 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         val operationDao = db.operationDao()
 
         groupDao.insert(TEST_GROUP)
-        dao.insert(TEST_MEMBER.copy(id = 0, displayName = "member1", publicKey = byteArrayOf(1), identity = MEMBER_IDENTITY_1))
-        dao.insert(TEST_MEMBER.copy(id = 0, displayName = "member2", publicKey = byteArrayOf(2), identity = MEMBER_IDENTITY_2))
+        dao.insert(
+            TEST_MEMBER.copy(
+                id = 0,
+                displayName = "member1",
+                publicKey = byteArrayOf(1),
+                identity = MEMBER_IDENTITY_1
+            )
+        )
+        dao.insert(
+            TEST_MEMBER.copy(
+                id = 0,
+                displayName = "member2",
+                publicKey = byteArrayOf(2),
+                identity = MEMBER_IDENTITY_2
+            )
+        )
 
         operationDao.insert(
             OperationEntity(
-                groupId = 1,
-                operationAuthorId = 1,
+                groupIdentity = GROUP_IDENTITY,
+                operationAuthorIdentity = MEMBER_IDENTITY_1,
                 createdAt = CREATED_AT,
                 lamportClock = 1,
                 type = "type1",
@@ -305,8 +380,8 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         )
         operationDao.insert(
             OperationEntity(
-                groupId = 1,
-                operationAuthorId = 1,
+                groupIdentity = GROUP_IDENTITY,
+                operationAuthorIdentity = MEMBER_IDENTITY_1,
                 createdAt = CREATED_AT + 1,
                 lamportClock = 2,
                 type = "type2",
@@ -317,8 +392,8 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         )
         operationDao.insert(
             OperationEntity(
-                groupId = 1,
-                operationAuthorId = 2,
+                groupIdentity = GROUP_IDENTITY,
+                operationAuthorIdentity = MEMBER_IDENTITY_2,
                 createdAt = CREATED_AT + 2,
                 lamportClock = 3,
                 type = "type3",
@@ -343,7 +418,7 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
     private fun assertContainsGroupMember(actual: List<GroupMemberEntity>, expected: GroupMemberEntity) {
         val found = actual.any {
             it.id == expected.id &&
-                    it.groupId == expected.groupId &&
+                    it.groupIdentity == expected.groupIdentity &&
                     it.displayName == expected.displayName &&
                     it.role == expected.role &&
                     it.identity == expected.identity &&
@@ -359,7 +434,7 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         }
 
         assertThat(actual.id, equalTo(expected.id))
-        assertThat(actual.groupId, equalTo(expected.groupId))
+        assertThat(actual.groupIdentity, equalTo(expected.groupIdentity))
         assertThat(actual.displayName, equalTo(expected.displayName))
         assertThat(actual.role, equalTo(expected.role))
         assertThat(actual.identity, equalTo(expected.identity))
@@ -403,7 +478,7 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         )
 
         private val TEST_MEMBER = GroupMemberEntity(
-            groupId = 1,
+            groupIdentity = GROUP_IDENTITY,
             displayName = MEMBER_NAME,
             publicKey = byteArrayOf(1, 2, 3, 4),
             role = ROLE,
@@ -411,8 +486,8 @@ class GroupMemberRepositoryTest : DatabaseTestSuite() {
         )
 
         private val TEST_EXPENSE = ExpenseEntity(
-            groupId = 1,
-            paidByMemberId = 1,
+            groupIdentity = GROUP_IDENTITY,
+            paidByMemberIdentity = MEMBER_IDENTITY_1,
             createdAt = CREATED_AT,
             name = EXPENSE_NAME,
             minorUnits = 100,

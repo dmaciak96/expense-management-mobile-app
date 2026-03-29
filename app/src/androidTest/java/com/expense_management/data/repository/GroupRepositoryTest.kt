@@ -18,8 +18,8 @@ import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
+import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
 class GroupRepositoryTest : DatabaseTestSuite() {
@@ -216,7 +216,7 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         )
         val member1 = GroupMemberEntity(
             id = 1,
-            groupId = 1,
+            groupIdentity = GROUP_IDENTITY_1,
             displayName = MEMBER_NAME + 1,
             publicKey = byteArrayOf(1, 2, 3, 4),
             role = ROLE + 1,
@@ -224,7 +224,7 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         )
         val member2 = GroupMemberEntity(
             id = 2,
-            groupId = 1,
+            groupIdentity = GROUP_IDENTITY_1,
             displayName = MEMBER_NAME + 11,
             publicKey = byteArrayOf(1, 2, 3, 4, 5),
             role = ROLE + 11,
@@ -232,7 +232,7 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         )
         val member3 = GroupMemberEntity(
             id = 3,
-            groupId = 2,
+            groupIdentity = GROUP_IDENTITY_2,
             displayName = MEMBER_NAME + 2,
             publicKey = byteArrayOf(1, 2, 3, 4, 5, 6),
             role = ROLE + 2,
@@ -240,7 +240,7 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         )
         val member4 = GroupMemberEntity(
             id = 4,
-            groupId = 2,
+            groupIdentity = GROUP_IDENTITY_2,
             displayName = MEMBER_NAME + 22,
             publicKey = byteArrayOf(1, 2, 3, 4, 5, 6, 7),
             role = ROLE + 22,
@@ -281,8 +281,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
 
         val expense1 = ExpenseEntity(
             id = 1,
-            groupId = group1.id,
-            paidByMemberId = PAID_BY + 1,
+            groupIdentity = GROUP_IDENTITY_1,
+            paidByMemberIdentity = MEMBER_IDENTITY_1,
             createdAt = CREATED_AT,
             name = EXPENSE_NAME + "1",
             minorUnits = MINOR_UNITS + 1,
@@ -291,8 +291,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         )
         val expense2 = ExpenseEntity(
             id = 2,
-            groupId = group1.id,
-            paidByMemberId = PAID_BY + 2,
+            groupIdentity = GROUP_IDENTITY_1,
+            paidByMemberIdentity = MEMBER_IDENTITY_2,
             createdAt = CREATED_AT,
             name = EXPENSE_NAME + "2",
             minorUnits = MINOR_UNITS + 2,
@@ -301,8 +301,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         )
         val expense3 = ExpenseEntity(
             id = 3,
-            groupId = group2.id,
-            paidByMemberId = PAID_BY + 3,
+            groupIdentity = GROUP_IDENTITY_2,
+            paidByMemberIdentity = MEMBER_IDENTITY_3,
             createdAt = CREATED_AT,
             name = EXPENSE_NAME + "3",
             minorUnits = MINOR_UNITS + 3,
@@ -311,8 +311,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         )
         val expense4 = ExpenseEntity(
             id = 4,
-            groupId = group2.id,
-            paidByMemberId = PAID_BY + 4,
+            groupIdentity = GROUP_IDENTITY_2,
+            paidByMemberIdentity = MEMBER_IDENTITY_4,
             createdAt = CREATED_AT,
             name = EXPENSE_NAME + "4",
             minorUnits = MINOR_UNITS + 4,
@@ -354,8 +354,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
 
         val operation1 = OperationEntity(
             id = 1,
-            groupId = group1.id,
-            operationAuthorId = OPERATION_AUTHOR_ID + 1,
+            groupIdentity = GROUP_IDENTITY_1,
+            operationAuthorIdentity = MEMBER_IDENTITY_1,
             createdAt = CREATED_AT + 1,
             lamportClock = LAMPORT_CLOCK + 1,
             type = OPERATION_TYPE,
@@ -365,8 +365,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         )
         val operation2 = OperationEntity(
             id = 2,
-            groupId = group1.id,
-            operationAuthorId = OPERATION_AUTHOR_ID + 2,
+            groupIdentity = GROUP_IDENTITY_1,
+            operationAuthorIdentity = MEMBER_IDENTITY_2,
             createdAt = CREATED_AT + 2,
             lamportClock = LAMPORT_CLOCK + 2,
             type = OPERATION_TYPE,
@@ -376,8 +376,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         )
         val operation3 = OperationEntity(
             id = 3,
-            groupId = group2.id,
-            operationAuthorId = OPERATION_AUTHOR_ID + 3,
+            groupIdentity = GROUP_IDENTITY_2,
+            operationAuthorIdentity = MEMBER_IDENTITY_3,
             createdAt = CREATED_AT + 3,
             lamportClock = LAMPORT_CLOCK + 3,
             type = OPERATION_TYPE,
@@ -387,8 +387,8 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         )
         val operation4 = OperationEntity(
             id = 4,
-            groupId = group2.id,
-            operationAuthorId = OPERATION_AUTHOR_ID + 4,
+            groupIdentity = GROUP_IDENTITY_2,
+            operationAuthorIdentity = MEMBER_IDENTITY_4,
             createdAt = CREATED_AT + 4,
             lamportClock = LAMPORT_CLOCK + 4,
             type = OPERATION_TYPE,
@@ -419,12 +419,10 @@ class GroupRepositoryTest : DatabaseTestSuite() {
         private const val EXPENSE_NAME = "expense"
         private const val ROLE = "role"
         private const val CREATED_AT = 12345L
-        private const val PAID_BY = 11
         private const val MINOR_UNITS = 1234L
         private const val CURRENCY = "test_currency"
         private const val OPERATION_TYPE = "test_type"
         private const val LAMPORT_CLOCK = 1234L
-        private const val OPERATION_AUTHOR_ID = 11
 
         private const val GROUP_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c70"
         private const val GROUP_IDENTITY_1 = "dfa4e836-190a-4292-a3fe-c516c1d99c71"

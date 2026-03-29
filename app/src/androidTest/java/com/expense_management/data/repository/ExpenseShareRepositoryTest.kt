@@ -85,14 +85,47 @@ class ExpenseShareRepositoryTest : DatabaseTestSuite() {
     fun shouldGetAllExpenseShares() = runTest(timeout = 1.seconds) {
         prepareRequiredData()
 
-        dao.insert(TEST_SHARE.copy(memberId = 1, minorUnits = 100, identity = SHARE_IDENTITY_1))
-        dao.insert(TEST_SHARE.copy(memberId = 2, minorUnits = 200, identity = SHARE_IDENTITY_2))
-        dao.insert(TEST_SHARE.copy(memberId = 3, minorUnits = 300, identity = SHARE_IDENTITY_3))
+        dao.insert(
+            TEST_SHARE.copy(
+                memberIdentity = MEMBER_IDENTITY,
+                minorUnits = 100,
+                identity = SHARE_IDENTITY_1
+            )
+        )
+        dao.insert(
+            TEST_SHARE.copy(
+                memberIdentity = MEMBER_IDENTITY,
+                minorUnits = 200,
+                identity = SHARE_IDENTITY_2
+            )
+        )
+        dao.insert(
+            TEST_SHARE.copy(
+                memberIdentity = MEMBER_IDENTITY,
+                minorUnits = 300,
+                identity = SHARE_IDENTITY_3
+            )
+        )
 
         val expected = listOf(
-            TEST_SHARE.copy(id = 1, memberId = 1, minorUnits = 100, identity = SHARE_IDENTITY_1),
-            TEST_SHARE.copy(id = 2, memberId = 2, minorUnits = 200, identity = SHARE_IDENTITY_2),
-            TEST_SHARE.copy(id = 3, memberId = 3, minorUnits = 300, identity = SHARE_IDENTITY_3)
+            TEST_SHARE.copy(
+                id = 1,
+                memberIdentity = MEMBER_IDENTITY,
+                minorUnits = 100,
+                identity = SHARE_IDENTITY_1
+            ),
+            TEST_SHARE.copy(
+                id = 2,
+                memberIdentity = MEMBER_IDENTITY,
+                minorUnits = 200,
+                identity = SHARE_IDENTITY_2
+            ),
+            TEST_SHARE.copy(
+                id = 3,
+                memberIdentity = MEMBER_IDENTITY,
+                minorUnits = 300,
+                identity = SHARE_IDENTITY_3
+            )
         )
 
         val result = repository.getAll()
@@ -105,9 +138,27 @@ class ExpenseShareRepositoryTest : DatabaseTestSuite() {
     fun shouldGetExpenseShareByIdentity() = runTest(timeout = 1.seconds) {
         prepareRequiredData()
 
-        dao.insert(TEST_SHARE.copy(memberId = 1, minorUnits = 100, identity = SHARE_IDENTITY_1))
-        dao.insert(TEST_SHARE.copy(memberId = 2, minorUnits = 200, identity = SHARE_IDENTITY_2))
-        dao.insert(TEST_SHARE.copy(memberId = 3, minorUnits = 300, identity = SHARE_IDENTITY_3))
+        dao.insert(
+            TEST_SHARE.copy(
+                memberIdentity = MEMBER_IDENTITY,
+                minorUnits = 100,
+                identity = SHARE_IDENTITY_1
+            )
+        )
+        dao.insert(
+            TEST_SHARE.copy(
+                memberIdentity = MEMBER_IDENTITY_2,
+                minorUnits = 200,
+                identity = SHARE_IDENTITY_2
+            )
+        )
+        dao.insert(
+            TEST_SHARE.copy(
+                memberIdentity = MEMBER_IDENTITY,
+                minorUnits = 300,
+                identity = SHARE_IDENTITY_3
+            )
+        )
 
         val result1 = repository.getByIdentity(UUID.fromString(SHARE_IDENTITY_1))
             .first { it is OperationResult.Success } as OperationResult.Success<ExpenseShareEntity?>
@@ -115,20 +166,42 @@ class ExpenseShareRepositoryTest : DatabaseTestSuite() {
             .first { it is OperationResult.Success } as OperationResult.Success<ExpenseShareEntity?>
         val result3 = repository.getByIdentity(UUID.fromString(SHARE_IDENTITY_3))
             .first { it is OperationResult.Success } as OperationResult.Success<ExpenseShareEntity?>
-        val emptyResult = repository.getByIdentity(UUID.fromString("dfa4e836-190a-4292-a3fe-c516c1d99c91"))
-            .first { it is OperationResult.Success } as OperationResult.Success<ExpenseShareEntity?>
+        val emptyResult =
+            repository.getByIdentity(UUID.fromString("dfa4e836-190a-4292-a3fe-c516c1d99c91"))
+                .first { it is OperationResult.Success } as OperationResult.Success<ExpenseShareEntity?>
 
         assertThat(
             result1.data,
-            equalTo(TEST_SHARE.copy(id = 1, memberId = 1, minorUnits = 100, identity = SHARE_IDENTITY_1))
+            equalTo(
+                TEST_SHARE.copy(
+                    id = 1,
+                    memberIdentity = MEMBER_IDENTITY,
+                    minorUnits = 100,
+                    identity = SHARE_IDENTITY_1
+                )
+            )
         )
         assertThat(
             result2.data,
-            equalTo(TEST_SHARE.copy(id = 2, memberId = 2, minorUnits = 200, identity = SHARE_IDENTITY_2))
+            equalTo(
+                TEST_SHARE.copy(
+                    id = 2,
+                    memberIdentity = MEMBER_IDENTITY_2,
+                    minorUnits = 200,
+                    identity = SHARE_IDENTITY_2
+                )
+            )
         )
         assertThat(
             result3.data,
-            equalTo(TEST_SHARE.copy(id = 3, memberId = 3, minorUnits = 300, identity = SHARE_IDENTITY_3))
+            equalTo(
+                TEST_SHARE.copy(
+                    id = 3,
+                    memberIdentity = MEMBER_IDENTITY,
+                    minorUnits = 300,
+                    identity = SHARE_IDENTITY_3
+                )
+            )
         )
         assertThat(emptyResult.data, equalTo(null))
     }
@@ -137,18 +210,51 @@ class ExpenseShareRepositoryTest : DatabaseTestSuite() {
     fun shouldGetExpenseSharesByExpenseId() = runTest(timeout = 1.seconds) {
         prepareRequiredData()
 
-        dao.insert(TEST_SHARE.copy(expenseId = 1, memberId = 1, minorUnits = 100, identity = SHARE_IDENTITY_1))
-        dao.insert(TEST_SHARE.copy(expenseId = 1, memberId = 2, minorUnits = 200, identity = SHARE_IDENTITY_2))
-        dao.insert(TEST_SHARE.copy(expenseId = 2, memberId = 3, minorUnits = 300, identity = SHARE_IDENTITY_3))
+        dao.insert(
+            TEST_SHARE.copy(
+                expenseIdentity = EXPENSE_IDENTITY,
+                memberIdentity = MEMBER_IDENTITY,
+                minorUnits = 100,
+                identity = SHARE_IDENTITY_1
+            )
+        )
+        dao.insert(
+            TEST_SHARE.copy(
+                expenseIdentity = EXPENSE_IDENTITY,
+                memberIdentity = MEMBER_IDENTITY_2,
+                minorUnits = 200,
+                identity = SHARE_IDENTITY_2
+            )
+        )
+        dao.insert(
+            TEST_SHARE.copy(
+                expenseIdentity = EXPENSE_IDENTITY_2,
+                memberIdentity = UUID.randomUUID().toString(),
+                minorUnits = 300,
+                identity = SHARE_IDENTITY_3
+            )
+        )
 
-        val result = repository.getExpenseSharesByExpenseIdentity(1)
+        val result = repository.getExpenseSharesByExpenseIdentity(UUID.fromString(EXPENSE_IDENTITY))
             .first { it is OperationResult.Success } as OperationResult.Success<List<ExpenseShareEntity>>
 
         assertThat(
             result.data,
             containsInAnyOrder(
-                TEST_SHARE.copy(id = 1, expenseId = 1, memberId = 1, minorUnits = 100, identity = SHARE_IDENTITY_1),
-                TEST_SHARE.copy(id = 2, expenseId = 1, memberId = 2, minorUnits = 200, identity = SHARE_IDENTITY_2)
+                TEST_SHARE.copy(
+                    id = 1,
+                    expenseIdentity = EXPENSE_IDENTITY,
+                    memberIdentity = MEMBER_IDENTITY,
+                    minorUnits = 100,
+                    identity = SHARE_IDENTITY_1
+                ),
+                TEST_SHARE.copy(
+                    id = 2,
+                    expenseIdentity = EXPENSE_IDENTITY,
+                    memberIdentity = MEMBER_IDENTITY_2,
+                    minorUnits = 200,
+                    identity = SHARE_IDENTITY_2
+                )
             )
         )
     }
@@ -157,18 +263,47 @@ class ExpenseShareRepositoryTest : DatabaseTestSuite() {
     fun shouldGetExpenseSharesByGroupMemberIdentity() = runTest(timeout = 1.seconds) {
         prepareRequiredData()
 
-        dao.insert(TEST_SHARE.copy(memberId = 11, minorUnits = 100, identity = SHARE_IDENTITY_1))
-        dao.insert(TEST_SHARE.copy(memberId = 11, minorUnits = 200, identity = SHARE_IDENTITY_2))
-        dao.insert(TEST_SHARE.copy(memberId = 22, minorUnits = 300, identity = SHARE_IDENTITY_3))
+        dao.insert(
+            TEST_SHARE.copy(
+                memberIdentity = MEMBER_IDENTITY,
+                minorUnits = 100,
+                identity = SHARE_IDENTITY_1
+            )
+        )
+        dao.insert(
+            TEST_SHARE.copy(
+                memberIdentity = MEMBER_IDENTITY,
+                minorUnits = 200,
+                identity = SHARE_IDENTITY_2
+            )
+        )
+        dao.insert(
+            TEST_SHARE.copy(
+                memberIdentity = MEMBER_IDENTITY_2,
+                minorUnits = 300,
+                identity = SHARE_IDENTITY_3
+            )
+        )
 
-        val result = repository.getExpenseSharesByGroupMemberIdentity(11)
-            .first { it is OperationResult.Success } as OperationResult.Success<List<ExpenseShareEntity>>
+        val result =
+            repository.getExpenseSharesByGroupMemberIdentity(UUID.fromString(MEMBER_IDENTITY))
+                .first { it is OperationResult.Success } as OperationResult.Success<List<ExpenseShareEntity>>
 
         assertThat(
             result.data,
             containsInAnyOrder(
-                TEST_SHARE.copy(id = 1, memberId = 11, minorUnits = 100, identity = SHARE_IDENTITY_1),
-                TEST_SHARE.copy(id = 2, memberId = 11, minorUnits = 200, identity = SHARE_IDENTITY_2)
+                TEST_SHARE.copy(
+                    id = 1,
+                    memberIdentity = MEMBER_IDENTITY,
+                    minorUnits = 100,
+                    identity = SHARE_IDENTITY_1
+                ),
+                TEST_SHARE.copy(
+                    id = 2,
+                    memberIdentity = MEMBER_IDENTITY,
+                    minorUnits = 200,
+                    identity = SHARE_IDENTITY_2
+                )
             )
         )
     }
@@ -182,7 +317,7 @@ class ExpenseShareRepositoryTest : DatabaseTestSuite() {
         expenseDao.insert(
             TEST_EXPENSE.copy(
                 name = "expense2",
-                paidByMemberId = 22,
+                paidByMemberIdentity = MEMBER_IDENTITY_2,
                 identity = EXPENSE_IDENTITY_2
             )
         )
@@ -196,6 +331,8 @@ class ExpenseShareRepositoryTest : DatabaseTestSuite() {
         private const val CURRENCY = "PLN"
 
         private const val GROUP_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c37"
+        private const val MEMBER_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c47"
+        private const val MEMBER_IDENTITY_2 = "dfa4e836-190a-4292-a3fe-c516c1d99c12"
         private const val EXPENSE_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c38"
         private const val EXPENSE_IDENTITY_2 = "dfa4e836-190a-4292-a3fe-c516c1d99c39"
         private const val SHARE_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c40"
@@ -210,8 +347,8 @@ class ExpenseShareRepositoryTest : DatabaseTestSuite() {
         )
 
         private val TEST_EXPENSE = ExpenseEntity(
-            groupId = 1,
-            paidByMemberId = 11,
+            groupIdentity = GROUP_IDENTITY,
+            paidByMemberIdentity = MEMBER_IDENTITY,
             createdAt = CREATED_AT,
             name = EXPENSE_NAME,
             minorUnits = 999,
@@ -220,8 +357,8 @@ class ExpenseShareRepositoryTest : DatabaseTestSuite() {
         )
 
         private val TEST_SHARE = ExpenseShareEntity(
-            expenseId = 1,
-            memberId = 11,
+            expenseIdentity = EXPENSE_IDENTITY,
+            memberIdentity = MEMBER_IDENTITY,
             minorUnits = MINOR_UNITS,
             currency = CURRENCY,
             identity = SHARE_IDENTITY

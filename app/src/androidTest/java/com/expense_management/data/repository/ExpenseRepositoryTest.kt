@@ -182,32 +182,32 @@ class ExpenseRepositoryTest : DatabaseTestSuite() {
         groupDao.insert(TEST_GROUP)
 
         val expense1 = TEST_EXPENSE.copy(id = 1, name = "expense1")
-        val expense2 = TEST_EXPENSE.copy(id = 2, name = "expense2", minorUnits = MINOR_UNITS + 100)
+        val expense2 = TEST_EXPENSE.copy(id = 2, identity = identity1, name = "expense2", minorUnits = MINOR_UNITS + 100)
 
         val share1 = ExpenseShareEntity(
-            expenseIdentity = 1,
-            memberIdentity = 1,
+            expenseIdentity = expense1.identity,
+            memberIdentity = identity1,
             minorUnits = 500,
             currency = CURRENCY,
             identity = identity1
         )
         val share2 = ExpenseShareEntity(
-            expenseId = 1,
-            memberId = 2,
+            expenseIdentity = expense1.identity,
+            memberIdentity = identity2,
             minorUnits = 700,
             currency = CURRENCY,
             identity = identity2
         )
         val share3 = ExpenseShareEntity(
-            expenseId = 2,
-            memberId = 3,
+            expenseIdentity = expense2.identity,
+            memberIdentity = identity3,
             minorUnits = 300,
             currency = CURRENCY,
             identity = identity3
         )
         val share4 = ExpenseShareEntity(
-            expenseId = 2,
-            memberId = 4,
+            expenseIdentity = expense2.identity,
+            memberIdentity = identity4,
             minorUnits = 800,
             currency = CURRENCY,
             identity = identity4
@@ -231,19 +231,21 @@ class ExpenseRepositoryTest : DatabaseTestSuite() {
 
     @Test
     fun shouldGetExpensesByGroupIdentity() = runTest(timeout = 1.seconds) {
+        val groupIdentity1 = "dfa4e836-190a-4292-a3fe-c516c1d99c49"
+        val groupIdentity2 = "dfa4e836-190a-4292-a3fe-c516c1d99c59"
         val groupDao = db.groupDao()
         groupDao.insert(TEST_GROUP)
         groupDao.insert(TEST_GROUP.copy(name = "group2", createdAt = CREATED_AT + 100))
 
-        val expense1 = TEST_EXPENSE.copy(name = "expense1", groupId = 1)
-        val expense2 = TEST_EXPENSE.copy(name = "expense2", groupId = 1)
-        val expense3 = TEST_EXPENSE.copy(name = "expense3", groupId = 2)
+        val expense1 = TEST_EXPENSE.copy(name = "expense1", groupIdentity = groupIdentity1)
+        val expense2 = TEST_EXPENSE.copy(name = "expense2", groupIdentity = groupIdentity1)
+        val expense3 = TEST_EXPENSE.copy(name = "expense3", groupIdentity = groupIdentity2)
 
         dao.insert(expense1)
         dao.insert(expense2)
         dao.insert(expense3)
 
-        val result = repository.getExpensesByGroupIdentity(1)
+        val result = repository.getExpensesByGroupIdentity(UUID.fromString(groupIdentity1))
             .first { it is OperationResult.Success } as OperationResult.Success<List<ExpenseEntity>>
 
         assertThat(
@@ -257,18 +259,20 @@ class ExpenseRepositoryTest : DatabaseTestSuite() {
 
     @Test
     fun shouldGetExpensesByGroupMemberIdentity() = runTest(timeout = 1.seconds) {
+        val paidByMemberIdentity1 = "dfa4e836-190a-4292-a3fe-c516c1d99c49"
+        val paidByMemberIdentity2 = "dfa4e836-190a-4292-a3fe-c516c1d99c59"
         val groupDao = db.groupDao()
         groupDao.insert(TEST_GROUP)
 
-        val expense1 = TEST_EXPENSE.copy(name = "expense1", paidByMemberId = 11)
-        val expense2 = TEST_EXPENSE.copy(name = "expense2", paidByMemberId = 11)
-        val expense3 = TEST_EXPENSE.copy(name = "expense3", paidByMemberId = 22)
+        val expense1 = TEST_EXPENSE.copy(name = "expense1", paidByMemberIdentity = paidByMemberIdentity1)
+        val expense2 = TEST_EXPENSE.copy(name = "expense2", paidByMemberIdentity = paidByMemberIdentity1)
+        val expense3 = TEST_EXPENSE.copy(name = "expense3", paidByMemberIdentity = paidByMemberIdentity2)
 
         dao.insert(expense1)
         dao.insert(expense2)
         dao.insert(expense3)
 
-        val result = repository.getExpensesByGroupMemberIdentity(11)
+        val result = repository.getExpensesByGroupMemberIdentity(UUID.fromString(paidByMemberIdentity1))
             .first { it is OperationResult.Success } as OperationResult.Success<List<ExpenseEntity>>
 
         assertThat(
@@ -286,8 +290,7 @@ class ExpenseRepositoryTest : DatabaseTestSuite() {
         private const val CREATED_AT = 12345L
         private const val MINOR_UNITS = 1234L
         private const val CURRENCY = "PLN"
-        private const val GROUP_ID = 1
-        private const val PAID_BY_MEMBER_ID = 11
+        private const val PAID_BY_MEMBER_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c39"
         private const val GROUP_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c37"
         private const val EXPENSE_IDENTITY = "dfa4e836-190a-4292-a3fe-c516c1d99c38"
 
@@ -298,8 +301,8 @@ class ExpenseRepositoryTest : DatabaseTestSuite() {
         )
 
         private val TEST_EXPENSE = ExpenseEntity(
-            groupId = GROUP_ID,
-            paidByMemberId = PAID_BY_MEMBER_ID,
+            groupIdentity = GROUP_IDENTITY,
+            paidByMemberIdentity = PAID_BY_MEMBER_IDENTITY,
             createdAt = CREATED_AT,
             name = EXPENSE_NAME,
             minorUnits = MINOR_UNITS,
