@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.compose.navigation)
     implementation(libs.hilt.android.navigation)
     implementation(libs.google.fonts)
+    implementation(libs.kotlinx.serialization)
 
     testImplementation(libs.junit)
     testImplementation(libs.room.testing)

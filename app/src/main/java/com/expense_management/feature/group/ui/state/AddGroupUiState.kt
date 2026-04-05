@@ -8,5 +8,6 @@ data class AddGroupUiState(
     val errorMessageId: Int? = null,
     val isValid: Boolean = false,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isSaved: Boolean = false,
 )

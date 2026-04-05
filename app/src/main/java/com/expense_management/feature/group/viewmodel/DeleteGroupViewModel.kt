@@ -97,7 +97,7 @@ class DeleteGroupViewModel @Inject constructor(
          * 2. Usuń wydatki
          * 3. Usuń expense share
          * 4. Usuń grupę,
-         * 5. Dodaj Operację
+         * 5. Usuń operacje,
          */
     }
 

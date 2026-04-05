@@ -29,6 +29,8 @@ data class SignedPayload(
 enum class OperationType {
     ADD_MEMBER,
     ADD_EXPENSE,
+    ADD_GROUP,
     REMOVE_MEMBER,
     REMOVE_EXPENSE,
+    REMOVE_GROUP,
 }

@@ -3,10 +3,28 @@ package com.expense_management.feature.group.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.expense_management.R
+import com.expense_management.core.common.awaitData
+import com.expense_management.core.common.getOrThrow
+import com.expense_management.core.security.SecurityUtil
+import com.expense_management.domain.model.GroupRole
+import com.expense_management.domain.model.OperationType
+import com.expense_management.domain.model.SignedPayload
+import com.expense_management.domain.model.binary.Payload
+import com.expense_management.domain.model.binary.PublicKey
+import com.expense_management.domain.model.binary.Signature
 import com.expense_management.domain.usecase.group.CreateGroupUseCase
+import com.expense_management.domain.usecase.group.GetGroupByIdentityUseCase
+import com.expense_management.domain.usecase.group_member.CreateGroupMemberUseCase
+import com.expense_management.domain.usecase.group_member.GetGroupMemberByIdentityUseCase
+import com.expense_management.domain.usecase.operation.CreateOperationUseCase
+import com.expense_management.domain.usecase.user_identity.GetUserIdentityUseCase
 import com.expense_management.feature.group.mapper.GroupUiMapper
 import com.expense_management.feature.group.ui.state.AddGroupUiState
 import com.expense_management.feature.group.ui.state.GroupUiModel
+import com.expense_management.feature.group_member.mapper.GroupMemberUiMapper
+import com.expense_management.feature.group_member.ui.state.GroupMemberUiModel
+import com.expense_management.feature.operation.mapper.OperationUiMapper
+import com.expense_management.feature.operation.ui.state.OperationUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,11 +32,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @HiltViewModel
 class AddGroupViewModel @Inject constructor(
     private val groupUiMapper: GroupUiMapper,
     private val createGroupUseCase: CreateGroupUseCase,
+    private val getGroupByIdentityUseCase: GetGroupByIdentityUseCase,
+    private val createGroupMemberUseCase: CreateGroupMemberUseCase,
+    private val getGroupMemberByIdentityUseCase: GetGroupMemberByIdentityUseCase,
+    private val createOperationUseCase: CreateOperationUseCase,
+    private val getUserIdentityUseCase: GetUserIdentityUseCase,
+    private val operationUiMapper: OperationUiMapper,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddGroupUiState())
@@ -43,33 +68,87 @@ class AddGroupViewModel @Inject constructor(
         val state = _uiState.value
         if (!state.isValid) return
 
-        val name = state.name
-        val groupUiModel = GroupUiModel(name = name)
         viewModelScope.launch {
             _uiState.update {
-                it.copy(isLoading = true, errorMessage = null)
+                it.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
             }
-            runCatching {
-                createGroupUseCase(groupUiMapper.toDomain(groupUiModel))
-            }.onSuccess {
-                _uiState.update {
-                    it.copy(isLoading = false)
-                }
-            }.onFailure { ex ->
+
+            try {
+                val currentUser = getUserIdentityUseCase().awaitData()
+                val groupUiModel = GroupUiModel(name = state.name)
+                val groupMemberUiModel = GroupMemberUiModel(
+                    identity = currentUser.identity,
+                    groupIdentity = groupUiModel.identity,
+                    displayName = currentUser.name,
+                    publicKey = PublicKey.from(currentUser.publicKey.toByteArray()),
+                    role = GroupRole.Owner
+                )
+
+                createGroupUseCase(
+                    groupUiMapper.toDomain(groupUiModel)
+                ).getOrThrow()
+
+                createGroupMemberUseCase(GroupMemberUiMapper.toDomain(groupMemberUiModel))
+                    .getOrThrow()
+
+                val group = getGroupByIdentityUseCase(groupUiModel.identity).awaitData()
+                createOperation(
+                    payload = groupUiMapper.toByteArray(group),
+                    groupIdentity = groupUiModel.identity,
+                    authorIdentity = currentUser.identity,
+                    lamportClock = 1L,
+                    operationType = OperationType.ADD_GROUP
+                )
+
+                val groupMember =
+                    getGroupMemberByIdentityUseCase(groupMemberUiModel.identity).awaitData()
+                createOperation(
+                    payload = GroupMemberUiMapper.toByteArray(groupMember),
+                    groupIdentity = groupUiModel.identity,
+                    authorIdentity = currentUser.identity,
+                    lamportClock = 2L,
+                    operationType = OperationType.ADD_MEMBER
+                )
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = ex.message
+                        isSaved = true
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.message
                     )
                 }
             }
         }
-        /**
-         * 1. Zapisz grupę w bazie
-         * 2. Utwórz dla niej operation log,
-         * 3. Dodaj usera jako członka grupy,
-         * 4. Dodaj do operation log GROUP_CREATED
-         * 5. Dodaj do operation log MEMBER_ADDED
-         */
+    }
+
+    private suspend fun createOperation(
+        payload: ByteArray,
+        groupIdentity: UUID,
+        authorIdentity: UUID,
+        lamportClock: Long,
+        operationType: OperationType,
+    ) {
+        val operation = OperationUiModel(
+            groupIdentity = groupIdentity,
+            operationAuthorIdentity = authorIdentity,
+            lamportClock = lamportClock,
+            type = operationType,
+            signedPayload = SignedPayload(
+                payload = Payload.from(payload),
+                signature = Signature.from(SecurityUtil.sign(payload))
+            )
+        )
+
+        createOperationUseCase(operationUiMapper.toDomain(operation))
+            .getOrThrow()
     }
 }

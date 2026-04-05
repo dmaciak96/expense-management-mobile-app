@@ -114,26 +114,34 @@ fun AppNavHost(
         dialog<AddGroupRoute> {
             val viewModel: AddGroupViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            LaunchedEffect(uiState.isSaved) {
+                if (uiState.isSaved) {
+                    navController.popBackStack()
+                }
+            }
+
             AddGroupDialog(
                 uiState = uiState,
                 onDismiss = { navController.popBackStack() },
-                onConfirm = {
-                    viewModel.addGroup()
-                    navController.popBackStack()
-                },
+                onConfirm = { viewModel.addGroup() },
                 onNameChange = { viewModel.onNameChange(it) }
             )
         }
         dialog<DeleteGroupRoute> {
             val viewModel: DeleteGroupViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            LaunchedEffect(uiState.isDeleted) {
+                if (uiState.isDeleted) {
+                    navController.popBackStack()
+                }
+            }
+
             DeleteGroupDialog(
                 uiState = uiState,
                 onDismiss = { navController.popBackStack() },
-                onConfirm = {
-                    viewModel.deleteGroup()
-                    navController.popBackStack()
-                }
+                onConfirm = { viewModel.deleteGroup() }
             )
         }
     }
