@@ -38,6 +38,15 @@ class GroupUiMapper @Inject constructor(
         return OperationUiMapper.JSON.encodeToString(dto).encodeToByteArray()
     }
 
+    fun toByteArray(groupUiModel: GroupUiModel): ByteArray {
+        val dto = GroupPayload(
+            identity = groupUiModel.identity.toString(),
+            createdAt = groupUiModel.createdAt.toInstant(zoneProvider.zoneId()).toEpochMilli(),
+            name = groupUiModel.name
+        )
+        return OperationUiMapper.JSON.encodeToString(dto).encodeToByteArray()
+    }
+
     @Serializable
     private data class GroupPayload(
         val identity: String,
