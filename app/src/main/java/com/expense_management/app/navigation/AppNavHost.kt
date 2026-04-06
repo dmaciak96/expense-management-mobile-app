@@ -5,11 +5,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -58,8 +62,12 @@ fun AppNavHost(
             val viewModel: CreateUserIdentityViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+            FabConfigEffect(
+                fabConfig = FabConfig.None,
+                onFabConfigChange = onFabConfigChange
+            )
+
             LaunchedEffect(Unit) {
-                onFabConfigChange(FabConfig.None)
                 viewModel.isMissingUserIdentity()
             }
 
@@ -93,9 +101,10 @@ fun AppNavHost(
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val activity = LocalActivity.current
 
-            LaunchedEffect(Unit) {
-                onFabConfigChange(FabConfig.None)
-            }
+            FabConfigEffect(
+                fabConfig = FabConfig.None,
+                onFabConfigChange = onFabConfigChange
+            )
 
             CreateUserIdentityDialog(
                 uiState = uiState,
@@ -111,9 +120,10 @@ fun AppNavHost(
             val viewModel: GroupListViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-            LaunchedEffect(Unit) {
-                onFabConfigChange(FabConfig.AddGroup)
-            }
+            FabConfigEffect(
+                fabConfig = FabConfig.AddGroup,
+                onFabConfigChange = onFabConfigChange
+            )
 
             GroupsScreen(
                 uiState = uiState,
@@ -128,36 +138,29 @@ fun AppNavHost(
         composable<GroupDetailsRoute> {
             val viewModel: GroupDetailsViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-            LaunchedEffect(uiState.group?.identity, uiState.selectedTab) {
-                val groupIdentity = uiState.group?.identity
 
-                val fabConfig = when {
-                    groupIdentity == null -> FabConfig.None
-
-                    uiState.selectedTab == GroupDetailsTab.Expenses -> {
-                        FabConfig.AddExpense(groupIdentity)
-                    }
-
-                    uiState.selectedTab == GroupDetailsTab.Members -> {
-                        FabConfig.AddGroupMember(groupIdentity)
-                    }
-
-                    else -> {
-                        FabConfig.None
-                    }
+            val fabConfig = when (val groupIdentity = uiState.group?.identity) {
+                null -> FabConfig.None
+                else -> when (uiState.selectedTab) {
+                    GroupDetailsTab.Expenses -> FabConfig.AddExpense(groupIdentity)
+                    GroupDetailsTab.Members -> FabConfig.AddGroupMember(groupIdentity)
                 }
-
-                onFabConfigChange(fabConfig)
             }
+
+            FabConfigEffect(
+                fabConfig = fabConfig,
+                onFabConfigChange = onFabConfigChange
+            )
             GroupDetailsScreen(uiState = uiState, onTabSelected = viewModel::onTabSelected)
         }
         dialog<AddGroupRoute> {
             val viewModel: AddGroupViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-            LaunchedEffect(Unit) {
-                onFabConfigChange(FabConfig.None)
-            }
+            FabConfigEffect(
+                fabConfig = FabConfig.None,
+                onFabConfigChange = onFabConfigChange
+            )
 
             LaunchedEffect(uiState.isSaved) {
                 if (uiState.isSaved) {
@@ -178,9 +181,10 @@ fun AppNavHost(
             val viewModel: DeleteGroupViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-            LaunchedEffect(Unit) {
-                onFabConfigChange(FabConfig.None)
-            }
+            FabConfigEffect(
+                fabConfig = FabConfig.None,
+                onFabConfigChange = onFabConfigChange
+            )
 
             LaunchedEffect(uiState.isDeleted) {
                 if (uiState.isDeleted) {
@@ -200,9 +204,10 @@ fun AppNavHost(
             val viewModel: AddExpenseViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-            LaunchedEffect(Unit) {
-                onFabConfigChange(FabConfig.None)
-            }
+            FabConfigEffect(
+                fabConfig = FabConfig.None,
+                onFabConfigChange = onFabConfigChange
+            )
 
             LaunchedEffect(uiState.isSaved) {
                 if (uiState.isSaved) {
@@ -221,9 +226,10 @@ fun AppNavHost(
             val viewModel: AddGroupMemberViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-            LaunchedEffect(Unit) {
-                onFabConfigChange(FabConfig.None)
-            }
+            FabConfigEffect(
+                fabConfig = FabConfig.None,
+                onFabConfigChange = onFabConfigChange
+            )
 
             LaunchedEffect(uiState.isSaved) {
                 if (uiState.isSaved) {
@@ -236,6 +242,30 @@ fun AppNavHost(
                 onDismiss = { navController.popBackStack() },
                 onConfirm = { viewModel.addGroupMember() }
             )
+        }
+    }
+}
+
+@Composable
+fun FabConfigEffect(
+    fabConfig: FabConfig,
+    onFabConfigChange: (FabConfig) -> Unit
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner, fabConfig) {
+        onFabConfigChange(fabConfig)
+
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                onFabConfigChange(fabConfig)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 }
