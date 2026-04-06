@@ -15,6 +15,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
+import com.expense_management.core.component.FabConfig
+import com.expense_management.feature.expense.ui.AddExpenseDialog
+import com.expense_management.feature.expense.ui.AddExpenseRoute
+import com.expense_management.feature.expense.viewmodel.AddExpenseViewModel
 import com.expense_management.feature.group.ui.AddGroupDialog
 import com.expense_management.feature.group.ui.AddGroupRoute
 import com.expense_management.feature.group.ui.DeleteGroupDialog
@@ -23,10 +27,14 @@ import com.expense_management.feature.group.ui.GroupDetailsRoute
 import com.expense_management.feature.group.ui.GroupDetailsScreen
 import com.expense_management.feature.group.ui.GroupListRoute
 import com.expense_management.feature.group.ui.GroupsScreen
+import com.expense_management.feature.group.ui.state.GroupDetailsTab
 import com.expense_management.feature.group.viewmodel.AddGroupViewModel
 import com.expense_management.feature.group.viewmodel.DeleteGroupViewModel
 import com.expense_management.feature.group.viewmodel.GroupDetailsViewModel
 import com.expense_management.feature.group.viewmodel.GroupListViewModel
+import com.expense_management.feature.group_member.ui.AddGroupMemberDialog
+import com.expense_management.feature.group_member.ui.AddGroupMemberRoute
+import com.expense_management.feature.group_member.viewmodel.AddGroupMemberViewModel
 import com.expense_management.feature.user_identity.ui.CreateUserIdentityDialog
 import com.expense_management.feature.user_identity.ui.CreateUserIdentityRoute
 import com.expense_management.feature.user_identity.viewmodel.CreateUserIdentityViewModel
@@ -38,6 +46,7 @@ object StartupRoute
 @Composable
 fun AppNavHost(
     navController: NavHostController,
+    onFabConfigChange: (FabConfig) -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -50,6 +59,7 @@ fun AppNavHost(
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
             LaunchedEffect(Unit) {
+                onFabConfigChange(FabConfig.None)
                 viewModel.isMissingUserIdentity()
             }
 
@@ -83,6 +93,10 @@ fun AppNavHost(
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val activity = LocalActivity.current
 
+            LaunchedEffect(Unit) {
+                onFabConfigChange(FabConfig.None)
+            }
+
             CreateUserIdentityDialog(
                 uiState = uiState,
                 onNameChange = { viewModel.onNameChange(it) },
@@ -96,6 +110,11 @@ fun AppNavHost(
         composable<GroupListRoute> {
             val viewModel: GroupListViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            LaunchedEffect(Unit) {
+                onFabConfigChange(FabConfig.AddGroup)
+            }
+
             GroupsScreen(
                 uiState = uiState,
                 onClick = { identity, name ->
@@ -109,11 +128,36 @@ fun AppNavHost(
         composable<GroupDetailsRoute> {
             val viewModel: GroupDetailsViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-            GroupDetailsScreen(uiState = uiState)
+            LaunchedEffect(uiState.group?.identity, uiState.selectedTab) {
+                val groupIdentity = uiState.group?.identity
+
+                val fabConfig = when {
+                    groupIdentity == null -> FabConfig.None
+
+                    uiState.selectedTab == GroupDetailsTab.Expenses -> {
+                        FabConfig.AddExpense(groupIdentity)
+                    }
+
+                    uiState.selectedTab == GroupDetailsTab.Members -> {
+                        FabConfig.AddGroupMember(groupIdentity)
+                    }
+
+                    else -> {
+                        FabConfig.None
+                    }
+                }
+
+                onFabConfigChange(fabConfig)
+            }
+            GroupDetailsScreen(uiState = uiState, onTabSelected = viewModel::onTabSelected)
         }
         dialog<AddGroupRoute> {
             val viewModel: AddGroupViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            LaunchedEffect(Unit) {
+                onFabConfigChange(FabConfig.None)
+            }
 
             LaunchedEffect(uiState.isSaved) {
                 if (uiState.isSaved) {
@@ -123,7 +167,9 @@ fun AppNavHost(
 
             AddGroupDialog(
                 uiState = uiState,
-                onDismiss = { navController.popBackStack() },
+                onDismiss = {
+                    navController.popBackStack()
+                },
                 onConfirm = { viewModel.addGroup() },
                 onNameChange = { viewModel.onNameChange(it) }
             )
@@ -131,6 +177,10 @@ fun AppNavHost(
         dialog<DeleteGroupRoute> {
             val viewModel: DeleteGroupViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            LaunchedEffect(Unit) {
+                onFabConfigChange(FabConfig.None)
+            }
 
             LaunchedEffect(uiState.isDeleted) {
                 if (uiState.isDeleted) {
@@ -140,8 +190,51 @@ fun AppNavHost(
 
             DeleteGroupDialog(
                 uiState = uiState,
-                onDismiss = { navController.popBackStack() },
+                onDismiss = {
+                    navController.popBackStack()
+                },
                 onConfirm = { viewModel.deleteGroup() }
+            )
+        }
+        dialog<AddExpenseRoute> {
+            val viewModel: AddExpenseViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            LaunchedEffect(Unit) {
+                onFabConfigChange(FabConfig.None)
+            }
+
+            LaunchedEffect(uiState.isSaved) {
+                if (uiState.isSaved) {
+                    navController.popBackStack()
+                }
+            }
+
+            AddExpenseDialog(
+                uiState = uiState,
+                onDismiss = { navController.popBackStack() },
+                onConfirm = { viewModel.addExpense() }
+            )
+        }
+
+        dialog<AddGroupMemberRoute> {
+            val viewModel: AddGroupMemberViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            LaunchedEffect(Unit) {
+                onFabConfigChange(FabConfig.None)
+            }
+
+            LaunchedEffect(uiState.isSaved) {
+                if (uiState.isSaved) {
+                    navController.popBackStack()
+                }
+            }
+
+            AddGroupMemberDialog(
+                uiState = uiState,
+                onDismiss = { navController.popBackStack() },
+                onConfirm = { viewModel.addGroupMember() }
             )
         }
     }

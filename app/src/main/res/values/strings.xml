@@ -22,4 +22,6 @@
     <string name="username_label">Imię</string>
     <string name="expenses">Wydatki</string>
     <string name="group_members">Członkowie grupy</string>
+    <string name="add_expense_title">Dodaj wydatek</string>
+    <string name="add_group_member_title">Dodaj nowego członka grupy</string>
 </resources>

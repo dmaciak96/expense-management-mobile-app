@@ -8,13 +8,15 @@ import com.expense_management.R
 import com.expense_management.core.common.OperationResult
 import com.expense_management.domain.usecase.group.GetGroupByIdentityUseCase
 import com.expense_management.feature.group.mapper.GroupUiMapper
-import com.expense_management.feature.group.ui.state.GroupDetailsUiState
 import com.expense_management.feature.group.ui.GroupDetailsRoute
+import com.expense_management.feature.group.ui.state.GroupDetailsTab
+import com.expense_management.feature.group.ui.state.GroupDetailsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -57,6 +59,12 @@ class GroupDetailsViewModel @Inject constructor(
                         }
                     }
                 }
+        }
+    }
+
+    fun onTabSelected(tab: GroupDetailsTab) {
+        _uiState.update {
+            it.copy(selectedTab = tab)
         }
     }
 }
