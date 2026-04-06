@@ -20,4 +20,6 @@
     <string name="delete">Usuń</string>
     <string name="create_identity">Podaj swoje imię</string>
     <string name="username_label">Imię</string>
+    <string name="expenses">Wydatki</string>
+    <string name="group_members">Członkowie grupy</string>
 </resources>
